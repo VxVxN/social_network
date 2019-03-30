@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>{{.Title}}</title>
+   </head>
+   <body>
+      {{if .IsAuthenticate}}
+      <h1>{{.Title}}</h1>
+      <form action="{{.GoMain}}" method="GET">
+         <input type="submit" value="Main" />
+      </form>
+      <form action="{{.Action}}" method="POST">
+         Log in here
+         <div><input name="username" type="text" /></div>
+         <div><input name="password" type="password" /></div>
+         Allow {{.Application}} to access your data?
+         <div><input name="isPermission" value="1" type="radio">
+            Yes
+         </div>
+         <div><input name="isPermission" value="0" type="radio">
+            No
+         </div>
+         <input type="submit" value="Login" />
+         {{end}}
+      </form>
+   </body>
+</html>

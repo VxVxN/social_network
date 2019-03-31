@@ -9,43 +9,44 @@ import (
 )
 
 type Page struct {
-	Title          string
-	Action         string
-	Application    string
+	Title  string
+	Action string
+	GoMain string
+	Error  string
+}
+
+type authorizationPage struct {
+	Page
 	IsAuthenticate bool
-	isPermission   bool
-	GoMain         string
 }
 
 var Database *sql.DB
 
+var aPage = authorizationPage{}
+var authorizationTemplate = template.Must(template.New("main").ParseFiles("ui/html/authorization.html"))
+
 func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
-	Authorize := Page{}
-	Authorize.Title = "Login"
-	Authorize.IsAuthenticate = true
-	Authorize.Application = ""
-	Authorize.Action = "/authorization"
-	Authorize.GoMain = "/main"
-	tpl := template.Must(template.New("main").ParseFiles("ui/html/authorization.html"))
-	tpl.ExecuteTemplate(w, "authorization.html", Authorize)
+	aPage.Title = "Login"
+	aPage.IsAuthenticate = true
+	aPage.Action = "/authorization"
+	aPage.GoMain = "/main"
+	aPage.Error = ""
+	authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 }
 
 func Authorize(w http.ResponseWriter, r *http.Request) {
-	username := r.FormValue("username")
+	email := r.FormValue("email")
 	password := r.FormValue("password")
-	isPermission := r.FormValue("isPermission")
 
-	uerr := Database.QueryRow("SELECT * from users where nickname=? and password=?", username, password)
-	if uerr != nil {
-		err := errors.New("User is not found.")
-		fmt.Println(err)
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-
-	if isPermission == "1" {
-		http.Redirect(w, r, "", http.StatusAccepted)
-	} else {
-		http.Redirect(w, r, "/authorization", http.StatusUnauthorized)
+	if r.Method == "POST" {
+		uerr := Database.QueryRow("SELECT * FROM users WHERE email=? AND password=?", email, password)
+		if uerr.Scan() == sql.ErrNoRows {
+			err := errors.New("User is not found")
+			fmt.Println(err)
+			aPage.Error = err.Error()
+			authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
+		} else {
+			http.Redirect(w, r, "", http.StatusAccepted)
+		}
 	}
 }

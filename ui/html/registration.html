@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{.Title}}</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+</head>
+
+<body>
+    {{if .IsRegistration}}
+    <h1>{{.Title}}</h1>
+    <form action="{{.GoMain}}" method="GET">
+        <input type="submit" value="Main" />
+    </form>
+    <form id="form" action="{{.Action}}" method="POST">
+        <table>
+            <tr>
+                <th align="left"><label for="username">Username*: </label></th>
+                <th><input id="username" type="text" value="{{.Username}}" /></th>
+            </tr>
+            <tr>
+                <th align="left"><label for="fname">First name: </label></th>
+                <th><input name="fname" type="text" value="{{.Fname}}" /></th>
+            </tr>
+            <tr>
+                <th align="left"><label for="lname">Last name: </label></th>
+                <th><input name="lname" type="text" value="{{.Lname}}" /></th>
+            </tr>
+            <tr>
+                <th align="left"><label for="email">Email*: </label></th>
+                <th><input id="email" type="text" value="{{.Email}}" /></th>
+            </tr>
+            <tr>
+                <th align="left"><label for="password">Password*: </label></th>
+                <th><input id="password" type="password" value="{{.Password}}" /></th>
+            </tr>
+        </table>
+        <label id="error">{{.Error}}</label>
+        <br>
+        <input id="buttonCheck" type="button" value="Sign up" />
+        {{end}}
+    </form>
+
+    <script>
+        $('#buttonCheck').click(function () {
+            var password = (document.getElementById("password")).value;
+            var email = (document.getElementById("email")).value;
+            var username = (document.getElementById("username")).value;
+            var error = { err: document.getElementById("error") };
+            if (username == "") {
+                error.err.innerHTML = "Username is a required field.";
+                return
+            }
+            if (email == "") {
+                error.err.innerHTML = "Email is a required field.";
+                return
+            }
+            if (password == "") {
+                error.err.innerHTML = "Password is a required field.";
+                return
+            }
+            error.err.innerHTML = "";
+            $('#form').trigger('submit');
+        });
+    </script>
+</body>
+
+</html>

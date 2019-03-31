@@ -1,27 +1,47 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <title>{{.Title}}</title>
-   </head>
-   <body>
-      {{if .IsAuthenticate}}
-      <h1>{{.Title}}</h1>
-      <form action="{{.GoMain}}" method="GET">
-         <input type="submit" value="Main" />
-      </form>
-      <form action="{{.Action}}" method="POST">
-         Log in here
-         <div><input name="username" type="text" /></div>
-         <div><input name="password" type="password" /></div>
-         Allow {{.Application}} to access your data?
-         <div><input name="isPermission" value="1" type="radio">
-            Yes
-         </div>
-         <div><input name="isPermission" value="0" type="radio">
-            No
-         </div>
-         <input type="submit" value="Login" />
-         {{end}}
-      </form>
-   </body>
+
+<head>
+   <title>{{.Title}}</title>
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+</head>
+
+<body>
+   {{if .IsAuthenticate}}
+   <h1>{{.Title}}</h1>
+   <form action="{{.GoMain}}" method="GET">
+      <input type="submit" value="Main" />
+   </form>
+   <form id="form" action="{{.Action}}" method="POST">
+      <table>
+         <tr>
+            <th align="left"><label for="email">Email: </label></th>
+            <th><input id="email" type="text" /></th>
+         </tr>
+         <tr>
+            <th align="left"><label for="password">Password: </label></th>
+            <th><input id="password" type="password" /></th>
+         </tr>
+      </table>
+      <label id="error">{{.Error}}</label>
+      <br>
+      <input id="buttonCheck" type="button" value="Log in" />
+      {{end}}
+   </form>
+
+   <script>
+      $('#buttonCheck').click(function () {
+         var password = (document.getElementById("password")).value;
+         var email = (document.getElementById("email")).value;
+         var error = { err: document.getElementById("error") };
+         if (email == "" || password == "") {
+            error.err.innerHTML = "The fields must be filled in.";
+            return
+         }
+         error.err.innerHTML = "";
+         $('#form').trigger('submit');
+      });
+   </script>
+</body>
+
 </html>

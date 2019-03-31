@@ -33,6 +33,8 @@ func main() {
 	routes.HandleFunc("/main", mainForm).Methods("GET")
 	routes.HandleFunc("/authorization", authorization.Authorize).Methods("POST")
 	routes.HandleFunc("/authorization", authorization.AuthorizationForm).Methods("GET")
+	routes.HandleFunc("/registration", authorization.Registration).Methods("POST")
+	routes.HandleFunc("/registration", authorization.RegistrationForm).Methods("GET")
 	http.Handle("/", routes)
 	http.ListenAndServe(":8080", nil)
 }
@@ -41,7 +43,7 @@ func mainForm(w http.ResponseWriter, r *http.Request) {
 	main := Page{}
 	main.Title = "Main"
 	main.LogIn = "/authorization"
-	main.SignUp = "/main"
+	main.SignUp = "/registration"
 	tpl := template.Must(template.New("main").ParseFiles("ui/html/main.html"))
 	tpl.ExecuteTemplate(w, "main.html", main)
 }

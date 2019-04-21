@@ -23,7 +23,7 @@ type authorizationPage struct {
 var Database *sql.DB
 
 var aPage = authorizationPage{}
-var authorizationTemplate = template.Must(template.New("main").ParseFiles("ui/html/authorization.html"))
+var authorizationTemplate = template.Must(template.New("main").ParseFiles("templates/authorization.html"))
 
 func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
 	aPage.Title = "Login"

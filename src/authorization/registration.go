@@ -20,10 +20,10 @@ var rPage = registrationPage{}
 var registrationTemplate = template.Must(template.New("main").ParseFiles("templates/registration.html"))
 
 func RegistrationForm(w http.ResponseWriter, r *http.Request) {
-	rPage.Title = "Registration"
+	rPage.Title = "Sigh up"
 	rPage.IsRegistration = true
 	rPage.Action = "/registration"
-	rPage.GoMain = "/main"
+	rPage.GoMain = "/"
 	rPage.Username = ""
 	rPage.Fname = ""
 	rPage.Lname = ""

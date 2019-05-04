@@ -6,8 +6,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-
-	"social_network/authorization"
+	"social_network/src/authorization"
+	"social_network/src/session"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -30,7 +30,9 @@ func main() {
 	authorization.Database = db
 
 	routes := mux.NewRouter()
-	routes.HandleFunc("/main", mainForm).Methods("GET")
+	routes.HandleFunc("/", mainForm).Methods("GET")
+	routes.HandleFunc("/main", session.MainPage).Methods("GET")
+	routes.HandleFunc("/logout", session.LogOut).Methods("GET")
 	routes.HandleFunc("/authorization", authorization.Authorize).Methods("POST")
 	routes.HandleFunc("/authorization", authorization.AuthorizationForm).Methods("GET")
 	routes.HandleFunc("/registration", authorization.Registration).Methods("POST")
@@ -48,6 +50,6 @@ func mainForm(w http.ResponseWriter, r *http.Request) {
 	main.Title = "Main"
 	main.LogIn = "/authorization"
 	main.SignUp = "/registration"
-	tpl := template.Must(template.New("main").ParseFiles("templates/main.html"))
-	tpl.ExecuteTemplate(w, "main.html", main)
+	tpl := template.Must(template.New("main").ParseFiles("templates/index.html"))
+	tpl.ExecuteTemplate(w, "index.html", main)
 }

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	"social_network/src/session"
 )
 
 type Page struct {
@@ -29,7 +31,7 @@ func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
 	aPage.Title = "Login"
 	aPage.IsAuthenticate = true
 	aPage.Action = "/authorization"
-	aPage.GoMain = "/main"
+	aPage.GoMain = "/"
 	aPage.Error = ""
 	authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 }
@@ -38,15 +40,27 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	if r.Method == "POST" {
-		uerr := Database.QueryRow("SELECT * FROM users WHERE email=? AND password=?", email, password)
-		if uerr.Scan() == sql.ErrNoRows {
-			err := errors.New("User is not found")
-			fmt.Println(err)
-			aPage.Error = err.Error()
-			authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
-		} else {
-			http.Redirect(w, r, "", http.StatusAccepted)
+	row := Database.QueryRow("SELECT id, nickname FROM users WHERE email=? AND password=?", email, password)
+	var id int
+	var nickname string
+	err := row.Scan(&id, &nickname)
+	if err != nil {
+		err := errors.New("User is not found")
+		fmt.Println(err)
+		aPage.Error = err.Error()
+		authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
+	} else {
+		session, err := session.Store.Get(r, "session")
+		if err == nil {
+			session.Values["id"] = id
+			session.Values["nickname"] = nickname
+			session.Values["authenticated"] = true
+			err = session.Save(r, w)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			http.Redirect(w, r, "/main", http.StatusMovedPermanently)
 		}
 	}
 }

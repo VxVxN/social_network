@@ -3,11 +3,13 @@ package authorization
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 
 	"social_network/src/session"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Page struct {
@@ -40,27 +42,43 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	row := Database.QueryRow("SELECT id, nickname FROM users WHERE email=? AND password=?", email, password)
+	row := Database.QueryRow("SELECT id, nickname, password FROM users WHERE email=?", email)
 	var id int
-	var nickname string
-	err := row.Scan(&id, &nickname)
+	var nickname, hashPassword string
+	err := row.Scan(&id, &nickname, &hashPassword)
 	if err != nil {
 		err := errors.New("User is not found")
-		fmt.Println(err)
 		aPage.Error = err.Error()
 		authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 	} else {
-		session, err := session.Store.Get(r, "session")
-		if err == nil {
-			session.Values["id"] = id
-			session.Values["nickname"] = nickname
-			session.Values["authenticated"] = true
-			err = session.Save(r, w)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+		if comparePasswords(hashPassword, []byte(password)) {
+			session, err := session.Store.Get(r, "session")
+			if err == nil {
+				session.Values["id"] = id
+				session.Values["nickname"] = nickname
+				session.Values["authenticated"] = true
+				err = session.Save(r, w)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				http.Redirect(w, r, "/main", http.StatusMovedPermanently)
 			}
-			http.Redirect(w, r, "/main", http.StatusMovedPermanently)
+		} else {
+			err := errors.New("User is not found")
+			aPage.Error = err.Error()
+			authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 		}
 	}
+}
+
+func comparePasswords(hashedPwd string, plainPwd []byte) bool {
+	byteHash := []byte(hashedPwd)
+	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+
+	return true
 }

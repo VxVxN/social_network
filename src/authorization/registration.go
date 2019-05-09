@@ -3,8 +3,8 @@ package authorization
 import (
 	"database/sql"
 	"html/template"
-	"log"
 	"net/http"
+	app "social_network/src/application"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -44,8 +44,8 @@ func Registration(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	nicknameRow := Database.QueryRow("SELECT nickname FROM users WHERE nickname=?", username)
-	emailRow := Database.QueryRow("SELECT email FROM users WHERE email=?", email)
+	nicknameRow := app.Database.QueryRow("SELECT nickname FROM users WHERE nickname=?", username)
+	emailRow := app.Database.QueryRow("SELECT email FROM users WHERE email=?", email)
 	errNickname := nicknameRow.Scan()
 	errEmail := emailRow.Scan()
 	if errEmail != sql.ErrNoRows || errNickname != sql.ErrNoRows {
@@ -65,7 +65,7 @@ func Registration(w http.ResponseWriter, r *http.Request) {
 	} else {
 		password = hashAndSalt([]byte(password))
 		email = strings.ToLower(email)
-		_ = Database.QueryRow("INSERT INTO users (nickname, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)", username, fname, lname, email, password)
+		_ = app.Database.QueryRow("INSERT INTO users (nickname, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)", username, fname, lname, email, password)
 		http.Redirect(w, r, "/authorization", http.StatusMovedPermanently)
 	}
 }
@@ -73,7 +73,7 @@ func Registration(w http.ResponseWriter, r *http.Request) {
 func hashAndSalt(pwd []byte) string {
 	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
-		log.Println(err)
+		app.ComLog.Error.Println(err)
 	}
 
 	return string(hash)

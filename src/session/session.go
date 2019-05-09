@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 
+	app "social_network/src/application"
+
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 )
@@ -44,7 +46,7 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
 	session, err := Store.Get(r, "session")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.ComLog.Error.Println(err)
 		return
 	}
 	session.Values["id"] = -1
@@ -52,7 +54,7 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 	session.Values["authenticated"] = false
 	err = session.Save(r, w)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		app.ComLog.Error.Println(err)
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)

@@ -3,8 +3,6 @@
 
 <head>
     <title>{{.Title}}</title>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/js/validate.js"></script>
 </head>
 
 <body>
@@ -41,34 +39,7 @@
         <input id="buttonCheck" type="button" value="Sign up" />
         {{end}}
     </form>
-    <script type="text/javascript">
-
-        $('#buttonCheck').click(function () {
-            var password = (document.getElementById("password")).value;
-            var email = (document.getElementById("email")).value;
-            var username = (document.getElementById("username")).value;
-            var error = { err: document.getElementById("error") };
-
-            if (username == "") {
-                error.err.innerHTML = "Username is a required field.";
-                return
-            }
-            if (email == "") {
-                error.err.innerHTML = "Email is a required field.";
-                return
-            }
-            if (password == "") {
-                error.err.innerHTML = "Password is a required field.";
-                return
-            }
-            if (!validateEmail(email)) {
-                error.err.innerHTML = "Email is invalid.";
-                return
-            }
-            error.err.innerHTML = "";
-            $('#form').trigger('submit');
-        });
-    </script>
 </body>
-
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/authorization/registration.js"></script>
 </html>

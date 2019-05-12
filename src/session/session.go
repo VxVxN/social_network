@@ -29,33 +29,44 @@ var mainTemplate = template.Must(template.New("main").ParseFiles("templates/main
 var Store = sessions.NewCookieStore([]byte(securecookie.GenerateRandomKey(32)))
 
 func MainPage(w http.ResponseWriter, r *http.Request) {
-	session, _ := Store.Get(r, "session")
-
-	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-		http.Error(w, "Forbidden", http.StatusForbidden)
+	c, err := r.Cookie("session_token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	sessionToken := c.Value
 
-	aPage.Nickname = session.Values["nickname"].(string)
-	aPage.Title = "Main"
-	aPage.LogOut = "/logout"
-	mainTemplate.ExecuteTemplate(w, "main.html", aPage)
+	row := app.Database.QueryRow("SELECT nickname FROM users WHERE id IN (SELECT user_id FROM sessions WHERE session=?)", sessionToken)
+
+	var nickname string
+	err = row.Scan(&nickname)
+	if err == nil {
+		aPage.Nickname = nickname
+		aPage.Title = "Main"
+		aPage.LogOut = "/logout"
+		mainTemplate.ExecuteTemplate(w, "main.html", aPage)
+	} else {
+		app.DBlog.Error.Println(err)
+	}
 }
 
 func LogOut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "no-cache")
-	session, err := Store.Get(r, "session")
+	c, err := r.Cookie("session_token")
 	if err != nil {
-		app.ComLog.Error.Println(err)
+		if err == http.ErrNoCookie {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	session.Values["id"] = -1
-	session.Values["nickname"] = ""
-	session.Values["authenticated"] = false
-	err = session.Save(r, w)
-	if err != nil {
-		app.ComLog.Error.Println(err)
-		return
-	}
+	sessionToken := c.Value
+	_ = app.Database.QueryRow("DELETE FROM sessions WHERE session=?", sessionToken)
+
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }

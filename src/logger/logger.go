@@ -18,7 +18,7 @@ type Logger struct {
 func Init(nameFile string) *Logger {
 	var sLogger Logger
 	var err error
-	sLogger.file, err = os.OpenFile("/home/vladkmir/go/src/social_network/logs/"+nameFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	sLogger.file, err = os.OpenFile("/home/vladimir/go/src/social_network/logs/"+nameFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln("Failed to open log file")
 	}

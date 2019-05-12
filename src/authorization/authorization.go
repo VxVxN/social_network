@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	app "social_network/src/application"
-	"social_network/src/session"
 
+	uuid "github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -49,20 +49,14 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 		authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 	} else {
 		if comparePasswords(hashPassword, []byte(password)) {
-			session, err := session.Store.Get(r, "session")
-			if err == nil {
-				session.Values["id"] = id
-				session.Values["nickname"] = nickname
-				session.Values["authenticated"] = true
-				err = session.Save(r, w)
-				if err != nil {
-					app.ComLog.Error.Println(err)
-					return
-				}
-				http.Redirect(w, r, "/main", http.StatusMovedPermanently)
-			} else {
-				app.ComLog.Error.Println(err)
-			}
+			sessionToken := uuid.New().String()
+			_ = app.Database.QueryRow("INSERT INTO sessions (session, user_id) VALUES (?, ?)", sessionToken, id)
+
+			http.SetCookie(w, &http.Cookie{
+				Name:  "session_token",
+				Value: sessionToken,
+			})
+			http.Redirect(w, r, "/main", http.StatusMovedPermanently)
 		} else {
 			err := errors.New("User is not found")
 			aPage.Error = err.Error()

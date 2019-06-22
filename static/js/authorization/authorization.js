@@ -19,7 +19,7 @@ $(function () {
    });
 });
 
-$('#buttonCheck').click(function () {
+$('#log_in_btn').click(function () {
    var password = (document.getElementById("password")).value;
    var email = (document.getElementById("email")).value;
    var error = { err: document.getElementById("error") };
@@ -29,4 +29,10 @@ $('#buttonCheck').click(function () {
    }
    error.err.innerHTML = "";
    $('#form').trigger('submit');
+});
+
+$(document).on('keypress', function (e) {
+   if (e.which == 13) {
+      $('#log_in_btn').click();
+   }
 });

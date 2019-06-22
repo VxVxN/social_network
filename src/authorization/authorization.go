@@ -26,6 +26,16 @@ var aPage = authorizationPage{}
 var authorizationTemplate = template.Must(template.New("main").ParseFiles("templates/authorization.html"))
 
 func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("session_token")
+	if err == nil {
+		sessionToken := c.Value
+		row := app.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
+		var userID int
+		err = row.Scan(&userID)
+		if err == nil {
+			http.Redirect(w, r, "/main", http.StatusMovedPermanently)
+		}
+	}
 	aPage.IsAuthenticate = true
 	aPage.Action = "/authorization"
 	aPage.GoMain = "/"

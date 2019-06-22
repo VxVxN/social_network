@@ -22,7 +22,7 @@ $(function () {
     });
 });
 
-$('#buttonCheck').click(function () {
+$('#sign_up_btn').click(function () {
     var password = (document.getElementById("password")).value;
     var email = (document.getElementById("email")).value;
     var username = (document.getElementById("username")).value;
@@ -52,3 +52,9 @@ var validateEmail = function (email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 };
+
+$(document).on('keypress', function (e) {
+    if (e.which == 13) {
+        $('#sign_up_btn').click();
+    }
+});

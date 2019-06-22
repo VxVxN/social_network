@@ -13,26 +13,15 @@ import (
 type registrationPage struct {
 	Page
 	IsRegistration bool
-	Username       string
-	Fname          string
-	Lname          string
-	Email          string
-	Password       string
 }
 
 var rPage = registrationPage{}
 var registrationTemplate = template.Must(template.New("main").ParseFiles("templates/registration.html"))
 
 func RegistrationForm(w http.ResponseWriter, r *http.Request) {
-	rPage.Title = "Sigh up"
 	rPage.IsRegistration = true
 	rPage.Action = "/registration"
 	rPage.GoMain = "/"
-	rPage.Username = ""
-	rPage.Fname = ""
-	rPage.Lname = ""
-	rPage.Email = ""
-	rPage.Password = ""
 
 	registrationTemplate.ExecuteTemplate(w, "registration.html", rPage)
 }
@@ -56,11 +45,6 @@ func Registration(w http.ResponseWriter, r *http.Request) {
 		if errNickname != sql.ErrNoRows {
 			rPage.Error = "Nickname already exists."
 		}
-		rPage.Username = username
-		rPage.Fname = fname
-		rPage.Lname = lname
-		rPage.Email = email
-		rPage.Password = password
 		registrationTemplate.ExecuteTemplate(w, "registration.html", rPage)
 	} else {
 		password = hashAndSalt([]byte(password))

@@ -7,6 +7,7 @@ import (
 
 	app "social_network/src/application"
 	"social_network/src/authorization"
+	"social_network/src/language"
 	"social_network/src/session"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -38,6 +39,9 @@ func main() {
 	routes.HandleFunc("/authorization", authorization.AuthorizationForm).Methods("GET")
 	routes.HandleFunc("/registration", authorization.Registration).Methods("POST")
 	routes.HandleFunc("/registration", authorization.RegistrationForm).Methods("GET")
+
+	routes.HandleFunc("/ajax/language", language.SetLanguage).Methods("POST")
+	routes.HandleFunc("/ajax/language", language.GetLanguage).Methods("GET")
 
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

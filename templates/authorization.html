@@ -1,33 +1,31 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-   <title>{{.Title}}</title>
-</head>
-
 <body>
    {{if .IsAuthenticate}}
-   <h1>{{.Title}}</h1>
+   <div id="main">
+   </div>
    <form action="{{.GoMain}}" method="GET">
-      <input type="submit" value="Main" />
+      <input type="submit" id="main_btn" />
    </form>
    <form id="form" action="{{.Action}}" method="POST">
       <table>
          <tr>
-            <th align="left"><label for="email">Email: </label></th>
+            <th align="left"><label id="email_lbl" for="email"></label></th>
             <th><input id="email" name="email" type="text" /></th>
          </tr>
          <tr>
-            <th align="left"><label for="password">Password: </label></th>
+            <th align="left"><label id="password_lbl" for="password"></label></th>
             <th><input id="password" name="password" type="password" /></th>
          </tr>
       </table>
       <label id="error">{{.Error}}</label>
       <br>
-      <input id="buttonCheck" type="button" value="Log in" />
+      <input id="log_in_btn" type="button" value="Log in" />
       {{end}}
    </form>
 </body>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 <script type="text/javascript" src="/static/js/authorization/authorization.js"></script>
+
 </html>

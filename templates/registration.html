@@ -1,45 +1,43 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <title>{{.Title}}</title>
-</head>
-
 <body>
     {{if .IsRegistration}}
-    <h1>{{.Title}}</h1>
+    <div id="main">
+    </div>
     <form action="{{.GoMain}}" method="GET">
-        <input type="submit" value="Main" />
+        <input type="submit" id="main_btn" />
     </form>
     <form id="form" action="{{.Action}}" method="POST">
         <table>
             <tr>
-                <th align="left"><label for="username">Username*: </label></th>
-                <th><input id="username" name="username" type="text" value="{{.Username}}" /></th>
+                <th align="left"><label id="username_lbl" for="username"></label></th>
+                <th><input id="username" name="username" type="text" /></th>
             </tr>
             <tr>
-                <th align="left"><label for="fname">First name: </label></th>
-                <th><input name="fname" type="text" value="{{.Fname}}" /></th>
+                <th align="left"><label id="fname_lbl" for="fname"></label></th>
+                <th><input name="fname" type="text" /></th>
             </tr>
             <tr>
-                <th align="left"><label for="lname">Last name: </label></th>
-                <th><input name="lname" type="text" value="{{.Lname}}" /></th>
+                <th align="left"><label id="lname_lbl" for="lname"></label></th>
+                <th><input name="lname" type="text" /></th>
             </tr>
             <tr>
-                <th align="left"><label for="email">Email*: </label></th>
-                <th><input id="email" name="email" type="text" value="{{.Email}}" /></th>
+                <th align="left"><label id="email_lbl" for="email"></label></th>
+                <th><input id="email" name="email" type="text" /></th>
             </tr>
             <tr>
-                <th align="left"><label for="password">Password*: </label></th>
-                <th><input id="password" name="password" type="password" value="{{.Password}}" /></th>
+                <th align="left"><label id="password_lbl" for="password"></label></th>
+                <th><input id="password" name="password" type="password" /></th>
             </tr>
         </table>
         <label id="error">{{.Error}}</label>
         <br>
-        <input id="buttonCheck" type="button" value="Sign up" />
+        <input id="sign_up_btn" type="button" />
         {{end}}
     </form>
 </body>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 <script type="text/javascript" src="/static/js/authorization/registration.js"></script>
+
 </html>

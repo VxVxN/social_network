@@ -12,7 +12,6 @@ import (
 )
 
 type Page struct {
-	Title  string
 	Action string
 	GoMain string
 	Error  string
@@ -27,7 +26,6 @@ var aPage = authorizationPage{}
 var authorizationTemplate = template.Must(template.New("main").ParseFiles("templates/authorization.html"))
 
 func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
-	aPage.Title = "Login"
 	aPage.IsAuthenticate = true
 	aPage.Action = "/authorization"
 	aPage.GoMain = "/"

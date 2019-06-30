@@ -5,11 +5,11 @@ import (
 	"html/template"
 	"net/http"
 
+	"social_network/src/ajax/common"
+	"social_network/src/ajax/language"
+	"social_network/src/ajax/online"
 	app "social_network/src/application"
 	"social_network/src/authorization"
-	"social_network/src/common"
-	"social_network/src/language"
-	"social_network/src/online"
 	"social_network/src/session"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -26,7 +26,7 @@ func main() {
 	app.ComLog.Info.Println("Server start.")
 	db, err := sql.Open("mysql", "user:123@tcp(127.0.0.1:3306)/social_network")
 	if err != nil {
-		app.DBlog.Fatal.Println(err)
+		app.ComLog.Fatal.Println(err)
 		panic(err)
 	}
 	defer db.Close()

@@ -63,7 +63,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 
 			err := row.Scan()
 			if err != nil {
-				app.DBlog.Error.Printf("Error create session: %v", err)
+				app.ComLog.Error.Printf("Error create session: %v", err)
 			}
 
 			http.SetCookie(w, &http.Cookie{

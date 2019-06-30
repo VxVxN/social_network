@@ -45,7 +45,7 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 	var nickname string
 	err = row.Scan(&nickname)
 	if err != nil {
-		app.DBlog.Error.Printf("Error open sessions: %v", err)
+		app.ComLog.Error.Printf("Error open sessions: %v", err)
 		return
 	}
 	aPage.Nickname = nickname

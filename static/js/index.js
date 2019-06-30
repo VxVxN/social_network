@@ -3,10 +3,10 @@ $(function () {
 
     var changeLangOnPage = function (language) {
         document.title = lang(language, "TITLE_INDEX")
-        document.getElementById('main').innerHTML = '<h1>' + lang(language, "MAIN_INDEX") + '</h1>'
-        document.getElementById('log_in_btn').value = lang(language, "LOG_IN_INDEX")
-        document.getElementById('sign_up_btn').value = lang(language, "SIGN_UP_INDEX")
-        document.getElementById('select_lang').value = language
+        $('#main').html('<h1>' + lang(language, "MAIN_INDEX") + '</h1>')
+        $('#log_in_btn').val(lang(language, "LOG_IN_INDEX"))
+        $('#sign_up_btn').val(lang(language, "SIGN_UP_INDEX"))
+        $('#select_lang').val(language)
     };
 
     $.ajax({

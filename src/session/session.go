@@ -44,14 +44,14 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 
 	var nickname string
 	err = row.Scan(&nickname)
-	if err == nil {
-		aPage.Nickname = nickname
-		aPage.Title = "Main"
-		aPage.LogOut = "/logout"
-		mainTemplate.ExecuteTemplate(w, "main.html", aPage)
-	} else {
-		app.DBlog.Error.Println(err)
+	if err != nil {
+		app.DBlog.Error.Printf("Error open sessions: %v", err)
+		return
 	}
+	aPage.Nickname = nickname
+	aPage.Title = "Main"
+	aPage.LogOut = "/logout"
+	mainTemplate.ExecuteTemplate(w, "main.html", aPage)
 }
 
 func LogOut(w http.ResponseWriter, r *http.Request) {

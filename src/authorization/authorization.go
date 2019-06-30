@@ -4,6 +4,7 @@ import (
 	"errors"
 	"html/template"
 	"net/http"
+	"time"
 
 	app "social_network/src/application"
 
@@ -32,7 +33,7 @@ func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
 		row := app.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
 		var userID int
 		err = row.Scan(&userID)
-		if err == nil {
+		if err == nil && userID != 0 {
 			http.Redirect(w, r, "/main", http.StatusMovedPermanently)
 		}
 	}
@@ -58,7 +59,12 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	} else {
 		if comparePasswords(hashPassword, []byte(password)) {
 			sessionToken := uuid.New().String()
-			_ = app.Database.QueryRow("INSERT INTO sessions (session, user_id) VALUES (?, ?)", sessionToken, id)
+			row = app.Database.QueryRow("INSERT INTO sessions (session, user_id, last_online) VALUES (?, ?, ?)", sessionToken, id, time.Now())
+
+			err := row.Scan()
+			if err != nil {
+				app.DBlog.Error.Printf("Error create session: %v", err)
+			}
 
 			http.SetCookie(w, &http.Cookie{
 				Name:  "session_token",

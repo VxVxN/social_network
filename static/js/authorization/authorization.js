@@ -3,11 +3,11 @@ $(function () {
 
    var changeLangOnPage = function (language) {
       document.title = lang(language, "TITLE_AUTHORIZATION")
-      document.getElementById('main').innerHTML = '<h1>' + lang(language, "MAIN_AUTHORIZATION") + '</h1>'
-      document.getElementById('main_btn').value = lang(language, "MAIN_BTN_AUTHORIZATION")
-      document.getElementById('email_lbl').textContent = lang(language, "EMAIL_LBL_AUTHORIZATION")
-      document.getElementById('password_lbl').textContent = lang(language, "PASSWORD_LBL_AUTHORIZATION")
-      document.getElementById('log_in_btn').value = lang(language, "LOG_IN_BTN_AUTHORIZATION")
+      $('#main').html('<h1>' + lang(language, "MAIN_AUTHORIZATION") + '</h1>')
+      $('#main_btn').val(lang(language, "MAIN_BTN_AUTHORIZATION"))
+      $('#email_lbl').text(lang(language, "EMAIL_LBL_AUTHORIZATION"))
+      $('#password_lbl').text(lang(language, "PASSWORD_LBL_AUTHORIZATION"))
+      $('#log_in_btn').val(lang(language, "LOG_IN_BTN_AUTHORIZATION"))
    };
 
    $.ajax({

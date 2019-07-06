@@ -5,13 +5,21 @@
    <h1>Welcome {{.Nickname}}</h1>
    <text>Users: </text>
    <br>
-   <textarea id="user_online"></textarea>
+   <ul id="user_online">
+   </ul>
+
+   <dl id="messages"></dl>
+
+   <input id="message_input" />
+   <br>
+   <button id="send_message">send message</button>
+
    <form action="{{.LogOut}}" method="GET">
       <input type="submit" value="Log out" />
    </form>
    <br>
 </body>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-<script type="text/javascript" src="/static/js/session/session.js"></script>
+<script type="text/javascript" src="/static/js/session/main.js"></script>
 
 </html>

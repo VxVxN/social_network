@@ -48,6 +48,8 @@ func main() {
 	routes.HandleFunc("/ajax/online", online.SetOnline).Methods("POST")
 
 	routes.HandleFunc("/ajax/list_users", common.ListUsers).Methods("GET")
+	routes.HandleFunc("/ajax/get_messages", common.GetMessages).Methods("GET")
+	routes.HandleFunc("/ajax/send_message", common.SendMessage).Methods("POST")
 
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

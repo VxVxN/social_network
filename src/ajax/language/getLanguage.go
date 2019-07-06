@@ -12,13 +12,16 @@ type response struct {
 }
 
 func GetLanguage(w http.ResponseWriter, r *http.Request) {
-	lang, err := r.Cookie("language")
+	var lang string
+	langCookie, err := r.Cookie("language")
 	if err != nil {
-		w.Write([]byte("EN"))
+		lang = "RU"
+	} else {
+		lang = langCookie.Value
 	}
 
 	var resp response
-	resp.Language = lang.Value
+	resp.Language = lang
 
 	respJSON, err := json.Marshal(resp)
 	if err != nil {

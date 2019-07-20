@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	app "social_network/src/application"
+	cnfg "social_network/src/config"
 )
 
 type response struct {
@@ -15,7 +16,7 @@ func GetLanguage(w http.ResponseWriter, r *http.Request) {
 	var lang string
 	langCookie, err := r.Cookie("language")
 	if err != nil {
-		lang = "RU"
+		lang = cnfg.Config.DefaultLanguage
 	} else {
 		lang = langCookie.Value
 	}

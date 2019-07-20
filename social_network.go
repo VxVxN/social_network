@@ -4,12 +4,14 @@ import (
 	"database/sql"
 	"html/template"
 	"net/http"
+	"strconv"
 
 	"social_network/src/ajax/common"
 	"social_network/src/ajax/language"
 	"social_network/src/ajax/online"
 	app "social_network/src/application"
 	"social_network/src/authorization"
+	cnfg "social_network/src/config"
 	"social_network/src/session"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -24,9 +26,10 @@ type Page struct {
 
 func main() {
 	app.ComLog.Info.Println("Server start.")
-	db, err := sql.Open("mysql", "user:123@tcp(127.0.0.1:3306)/social_network")
+	mysqlPort := strconv.Itoa(cnfg.Config.MysqlPort)
+	db, err := sql.Open("mysql", cnfg.Config.MysqlName+":"+cnfg.Config.MysqlPassword+"@tcp("+cnfg.Config.MysqlIP+":"+mysqlPort+")/social_network")
 	if err != nil {
-		app.ComLog.Fatal.Println(err)
+		app.ComLog.Fatal.Printf("Error open mysql: %v", err)
 		panic(err)
 	}
 	defer db.Close()
@@ -55,7 +58,8 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.Handle("/", routes)
-	http.ListenAndServe(":8080", nil)
+	port := ":" + strconv.Itoa(cnfg.Config.Port)
+	http.ListenAndServe(port, nil)
 }
 
 func mainForm(w http.ResponseWriter, r *http.Request) {

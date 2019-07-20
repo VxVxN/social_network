@@ -33,13 +33,15 @@ var requestListUsers = function () {// TODO упростить функцию и
         var userOnline = $('#user_online');
         userOnline.val("");
         $(".item").remove();
-        data.Nickname.forEach(function (nickname) {
-            $("#user_online").append("<li class='item'><button class='button'>" + nickname + "</button></li>");
-        });
-        $(".button").click(function (data) {
-            nicknameInterlocutor = data.srcElement.innerText
-            getMessages()
-        });
+        if (data.Nickname != null) {
+            data.Nickname.forEach(function (nickname) {
+                $("#user_online").append("<li class='item'><button class='button'>" + nickname + "</button></li>");
+            });
+            $(".button").click(function (data) {
+                nicknameInterlocutor = data.srcElement.innerText
+                getMessages()
+            });
+        }
     });
 };
 
@@ -72,10 +74,12 @@ var getMessages = function () {
             $("#message_input").show()
             $(".item_msg_nickname").remove();
             $(".item_message").remove();
-            dataresp.forEach(function (data) {
-                $("#messages").append("<dt class='item_msg_nickname'>" + data.Nickname + "</dt>");
-                $("#messages").append("<dd class='item_message'>" + data.Message + "</dd>");
-            });
+            if (dataresp != null) {
+                dataresp.forEach(function (data) {
+                    $("#messages").append("<dt class='item_msg_nickname'>" + data.Nickname + "</dt>");
+                    $("#messages").append("<dd class='item_message'>" + data.Message + "</dd>");
+                });
+            }
         });
     };
 };

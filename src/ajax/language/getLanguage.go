@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	app "social_network/src/application"
 	cnfg "social_network/src/config"
+	"social_network/src/log"
 )
 
 type response struct {
@@ -26,7 +26,7 @@ func GetLanguage(w http.ResponseWriter, r *http.Request) {
 
 	respJSON, err := json.Marshal(resp)
 	if err != nil {
-		app.ComLog.Error.Printf("Error marshal response: %v", err)
+		log.ComLog.Error.Printf("Error marshal response: %v", err)
 		return
 	}
 	fmt.Fprintln(w, string(respJSON))

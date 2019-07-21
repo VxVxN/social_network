@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	app "social_network/src/application"
+	"social_network/src/log"
 	"time"
 )
 
@@ -17,19 +18,19 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		app.ComLog.Error.Printf("Error redding body: %v", err)
+		log.ComLog.Error.Printf("Error redding body: %v", err)
 		return
 	}
 	var req requestSendMessage
 	err = json.Unmarshal(body, &req)
 	if err != nil {
-		app.ComLog.Error.Printf("Error redding body: %v", err)
+		log.ComLog.Error.Printf("Error redding body: %v", err)
 		return
 	}
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
-		app.ComLog.Error.Printf("Error get session token: %v", err)
+		log.ComLog.Error.Printf("Error get session token: %v", err)
 		return
 	}
 	sessionToken := c.Value
@@ -38,7 +39,7 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 	var secondID int
 	err = row.Scan(&secondID)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get id by nickname: %v. Error: %v", req.Nickname, err)
+		log.ComLog.Error.Printf("Error get id by nickname: %v. Error: %v", req.Nickname, err)
 		return
 	}
 
@@ -46,7 +47,7 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 	var firstID int
 	err = row.Scan(&firstID)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get id user: %v", err)
+		log.ComLog.Error.Printf("Error get id user: %v", err)
 		return
 	}
 	_ = app.Database.QueryRow("INSERT INTO messages (first_id, message, second_id, time_sending) VALUES (?, ?, ?, ?)", firstID, req.Message, secondID, time.Now())

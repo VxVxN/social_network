@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	app "social_network/src/application"
+	"social_network/src/log"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -57,7 +58,7 @@ func Registration(w http.ResponseWriter, r *http.Request) {
 func hashAndSalt(pwd []byte) string {
 	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
-		app.ComLog.Error.Println(err)
+		log.ComLog.Error.Println(err)
 	}
 
 	return string(hash)

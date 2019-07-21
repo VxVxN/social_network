@@ -10,6 +10,7 @@ import (
 	"time"
 
 	app "social_network/src/application"
+	"social_network/src/log"
 )
 
 type responseMessages struct {
@@ -23,7 +24,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
-		app.ComLog.Error.Printf("Error get session token: %v", err)
+		log.ComLog.Error.Printf("Error get session token: %v", err)
 		return
 	}
 	sessionToken := c.Value
@@ -32,7 +33,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 	var firstID int
 	err = row.Scan(&firstID)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get id user: %v", err)
+		log.ComLog.Error.Printf("Error get id user: %v", err)
 		return
 	}
 
@@ -40,7 +41,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 	var firstNickname string
 	err = row.Scan(&firstNickname)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get user: %v", err)
+		log.ComLog.Error.Printf("Error get user: %v", err)
 		return
 	}
 
@@ -48,7 +49,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 	var secondID int
 	err = row.Scan(&secondID)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get id by nickname: %v. Error: %v", secondNickname, err)
+		log.ComLog.Error.Printf("Error get id by nickname: %v. Error: %v", secondNickname, err)
 		return
 	}
 
@@ -56,12 +57,12 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 
 	messagesResult, err = getMessages(firstNickname, firstID, secondID)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get messages: %v", err)
+		log.ComLog.Error.Printf("Error get messages: %v", err)
 		return
 	}
 	secondMessages, err := getMessages(secondNickname, secondID, firstID)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get messages: %v", err)
+		log.ComLog.Error.Printf("Error get messages: %v", err)
 		return
 	}
 
@@ -70,7 +71,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 
 	output, err := json.Marshal(messagesResult)
 	if err != nil {
-		app.ComLog.Error.Printf("Error marshal response: %v", err)
+		log.ComLog.Error.Printf("Error marshal response: %v", err)
 		return
 	}
 	fmt.Fprintln(w, string(output))

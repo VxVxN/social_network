@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-	app "social_network/src/application"
+	"social_network/src/log"
 )
 
 type config struct {
@@ -21,14 +21,14 @@ var Config config
 func init() {
 	jsonFile, err := os.Open("config/main.json")
 	if err != nil {
-		app.ComLog.Fatal.Printf("Error open main config: %v", err)
+		log.ComLog.Fatal.Printf("Error open main config: %v", err)
 		panic(err)
 	}
 	defer jsonFile.Close()
 
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		app.ComLog.Fatal.Printf("Error read main config: %v", err)
+		log.ComLog.Fatal.Printf("Error read main config: %v", err)
 		panic(err)
 	}
 	json.Unmarshal(byteValue, &Config)

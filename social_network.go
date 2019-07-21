@@ -12,6 +12,7 @@ import (
 	app "social_network/src/application"
 	"social_network/src/authorization"
 	cnfg "social_network/src/config"
+	"social_network/src/log"
 	"social_network/src/session"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -25,11 +26,11 @@ type Page struct {
 }
 
 func main() {
-	app.ComLog.Info.Println("Server start.")
+	log.ComLog.Info.Println("Server start.")
 	mysqlPort := strconv.Itoa(cnfg.Config.MysqlPort)
 	db, err := sql.Open("mysql", cnfg.Config.MysqlName+":"+cnfg.Config.MysqlPassword+"@tcp("+cnfg.Config.MysqlIP+":"+mysqlPort+")/social_network")
 	if err != nil {
-		app.ComLog.Fatal.Printf("Error open mysql: %v", err)
+		log.ComLog.Fatal.Printf("Error open mysql: %v", err)
 		panic(err)
 	}
 	defer db.Close()

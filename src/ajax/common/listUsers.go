@@ -7,6 +7,7 @@ import (
 	"time"
 
 	app "social_network/src/application"
+	"social_network/src/log"
 )
 
 type responseListUsers struct {
@@ -16,7 +17,7 @@ type responseListUsers struct {
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session_token")
 	if err != nil {
-		app.ComLog.Error.Printf("Error get session token: %v", err)
+		log.ComLog.Error.Printf("Error get session token: %v", err)
 		return
 	}
 	sessionToken := c.Value
@@ -24,7 +25,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	timeAddMinute := time.Now().Add(-time.Minute)
 	rows, err := app.Database.Query("SELECT nickname FROM users WHERE id IN (SELECT user_id FROM sessions WHERE last_online>? AND session!=?)", timeAddMinute, sessionToken)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get list users: %v", err)
+		log.ComLog.Error.Printf("Error get list users: %v", err)
 		return
 	}
 
@@ -36,7 +37,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	output, err := json.Marshal(resp)
 	if err != nil {
-		app.ComLog.Error.Printf("Error marshal response: %v", err)
+		log.ComLog.Error.Printf("Error marshal response: %v", err)
 		return
 	}
 	fmt.Fprintln(w, string(output))

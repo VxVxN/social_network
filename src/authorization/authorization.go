@@ -7,6 +7,7 @@ import (
 	"time"
 
 	app "social_network/src/application"
+	"social_network/src/log"
 
 	uuid "github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -63,7 +64,7 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 
 			err := row.Scan()
 			if err != nil {
-				app.ComLog.Error.Printf("Error create session: %v", err)
+				log.ComLog.Error.Printf("Error create session: %v", err)
 			}
 
 			http.SetCookie(w, &http.Cookie{

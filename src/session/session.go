@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	app "social_network/src/application"
+	"social_network/src/log"
 
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
@@ -45,7 +46,7 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 	var nickname string
 	err = row.Scan(&nickname)
 	if err != nil {
-		app.ComLog.Error.Printf("Error get user: %v", err)
+		log.ComLog.Error.Printf("Error get user: %v", err)
 		return
 	}
 	aPage.Nickname = nickname

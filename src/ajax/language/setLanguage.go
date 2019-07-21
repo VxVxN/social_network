@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-
-	app "social_network/src/application"
+	"social_network/src/log"
 )
 
 type requestLanguage struct {
@@ -16,13 +15,13 @@ func SetLanguage(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 
 	if err != nil {
-		app.ComLog.Error.Printf("Error redding body: %v", err)
+		log.ComLog.Error.Printf("Error redding body: %v", err)
 		return
 	}
 	var req requestLanguage
 	err = json.Unmarshal(body, &req)
 	if err != nil {
-		app.ComLog.Error.Printf("Error redding body: %v", err)
+		log.ComLog.Error.Printf("Error redding body: %v", err)
 		return
 	}
 

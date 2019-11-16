@@ -54,8 +54,8 @@ func Authorize(w http.ResponseWriter, r *http.Request) {
 	var nickname, hashPassword string
 	err := row.Scan(&id, &nickname, &hashPassword)
 	if err != nil {
-		err := errors.New("User is not found")
-		aPage.Error = err.Error()
+		log.ComLog.Error.Printf("Error geting user data: %v", err)
+		aPage.Error = errors.New("User is not found").Error()
 		authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 	} else {
 		if comparePasswords(hashPassword, []byte(password)) {

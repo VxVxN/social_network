@@ -28,11 +28,13 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 		log.ComLog.Error.Printf("Error get list users: %v", err)
 		return
 	}
-
+	defer rows.Close()
 	resp := responseListUsers{}
 	for rows.Next() {
 		var nickname string
-		rows.Scan(&nickname)
+		if err := rows.Scan(&nickname); err != nil {
+			return
+		}
 		resp.Nickname = append(resp.Nickname, nickname)
 	}
 	output, err := json.Marshal(resp)

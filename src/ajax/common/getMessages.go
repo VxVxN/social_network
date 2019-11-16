@@ -83,12 +83,14 @@ func getMessages(nickname string, firstID, secondID int) ([]responseMessages, er
 		errText := fmt.Sprintf("Error get list messages: %v", err)
 		return nil, errors.New(errText)
 	}
-
+	defer rows.Close()
 	var messagesResult []responseMessages
 	var message responseMessages
 	var timeSending string
 	for rows.Next() {
-		rows.Scan(&message.Message, &timeSending)
+		if err := rows.Scan(&message.Message, &timeSending); err != nil {
+			return nil, err
+		}
 		timeSending += "Z"
 		timeSending := strings.Replace(timeSending, " ", "T", 1)
 		message.Time, _ = time.Parse(time.RFC3339, timeSending)

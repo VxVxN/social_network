@@ -3,6 +3,6 @@
     "MYSQL_NAME": "USER",
     "MYSQL_PASSWORD": "123",
     "MYSQL_IP": "133.126.52.21",
-    "MYSQL_PORT": "3306",
+    "MYSQL_PORT": 3306,
     "DEFAULT_LANGUAGE": "RU"
 }

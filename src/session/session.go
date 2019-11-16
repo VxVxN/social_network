@@ -42,7 +42,6 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 	sessionToken := c.Value
 
 	row := app.Database.QueryRow("SELECT nickname FROM users WHERE id IN (SELECT user_id FROM sessions WHERE session=?)", sessionToken)
-
 	var nickname string
 	err = row.Scan(&nickname)
 	if err != nil {

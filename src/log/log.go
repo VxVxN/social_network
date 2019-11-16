@@ -24,7 +24,7 @@ func init() {
 func Init(nameFile string) *logger {
 	var sLogger logger
 	var err error
-	sLogger.file, err = os.OpenFile("/home/vladimir/go/src/social_network/logs/"+nameFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	sLogger.file, err = os.OpenFile("logs/"+nameFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		slog.Fatalln("Failed to open log file")
 	}

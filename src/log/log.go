@@ -8,6 +8,7 @@ import (
 
 type logger struct {
 	Trace   *slog.Logger
+	Debug   *slog.Logger
 	Info    *slog.Logger
 	Warning *slog.Logger
 	Error   *slog.Logger
@@ -30,6 +31,10 @@ func Init(nameFile string) *logger {
 	}
 	sLogger.Trace = slog.New(ioutil.Discard,
 		"TRACE:   ",
+		slog.Ldate|slog.Ltime|slog.Lshortfile)
+
+	sLogger.Debug = slog.New(sLogger.file,
+		"DEBUG:   ",
 		slog.Ldate|slog.Ltime|slog.Lshortfile)
 
 	sLogger.Info = slog.New(sLogger.file,

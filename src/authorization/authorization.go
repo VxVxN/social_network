@@ -28,6 +28,8 @@ var aPage = authorizationPage{}
 var authorizationTemplate = template.Must(template.New("main").ParseFiles("templates/authorization.html"))
 
 func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-cache")
+
 	c, err := r.Cookie("session_token")
 	if err == nil {
 		sessionToken := c.Value

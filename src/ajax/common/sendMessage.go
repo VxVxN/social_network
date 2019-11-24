@@ -50,5 +50,6 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 		log.ComLog.Error.Printf("Error get id user: %v", err)
 		return
 	}
-	_ = app.Database.QueryRow("INSERT INTO messages (first_id, message, second_id, time_sending) VALUES (?, ?, ?, ?)", firstID, req.Message, secondID, time.Now())
+	row = app.Database.QueryRow("INSERT INTO messages (first_id, message, second_id, time_sending) VALUES (?, ?, ?, ?)", firstID, req.Message, secondID, time.Now())
+	_ = row.Scan()
 }

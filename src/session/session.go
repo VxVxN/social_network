@@ -66,7 +66,8 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sessionToken := c.Value
-	_ = app.Database.QueryRow("DELETE FROM sessions WHERE session=?", sessionToken)
+	row := app.Database.QueryRow("DELETE FROM sessions WHERE session=?", sessionToken)
+	_ = row.Scan()
 
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }

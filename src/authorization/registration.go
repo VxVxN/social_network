@@ -50,7 +50,8 @@ func Registration(w http.ResponseWriter, r *http.Request) {
 	} else {
 		password = hashAndSalt([]byte(password))
 		email = strings.ToLower(email)
-		_ = app.Database.QueryRow("INSERT INTO users (nickname, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)", username, fname, lname, email, password)
+		row := app.Database.QueryRow("INSERT INTO users (nickname, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)", username, fname, lname, email, password)
+		_ = row.Scan()
 		http.Redirect(w, r, "/authorization", http.StatusMovedPermanently)
 	}
 }

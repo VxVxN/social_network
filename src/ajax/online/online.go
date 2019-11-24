@@ -35,5 +35,6 @@ func SetOnline(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionToken := c.Value
 
-	_ = app.Database.QueryRow("UPDATE sessions SET last_online=? WHERE session=?", time.Now(), sessionToken)
+	row := app.Database.QueryRow("UPDATE sessions SET last_online=? WHERE session=?", time.Now(), sessionToken)
+	_ = row.Scan()
 }

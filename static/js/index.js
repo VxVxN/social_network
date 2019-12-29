@@ -1,7 +1,10 @@
-$(function () {
-    $.getScript("/static/js/language.js");
+$.getScript("/static/js/language.js");
 
+$(function () {
     var changeLangOnPage = function (language) {
+        if (language === null) {
+            language = "EN"
+        }
         document.title = lang(language, "TITLE_INDEX")
         $('#main').html('<h1>' + lang(language, "MAIN_INDEX") + '</h1>')
         $('#log_in_btn').val(lang(language, "LOG_IN_INDEX"))
@@ -14,7 +17,7 @@ $(function () {
         url: "/ajax/language",
     }).done(function (data) {
         data = JSON.parse(data);
-        changeLangOnPage(data.Language);
+        changeLangOnPage(data.data);
     });
 
     $("#select_lang").change(function () {

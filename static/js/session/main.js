@@ -24,7 +24,7 @@ $(function () {
     });
 });
 
-var requestListUsers = function () {// TODO упростить функцию и сделать её нормальной
+var requestListUsers = function () {
     $.ajax({
         type: "GET",
         url: "/ajax/list_users",
@@ -33,15 +33,13 @@ var requestListUsers = function () {// TODO упростить функцию и
         var userOnline = $('#user_online');
         userOnline.val("");
         $(".item").remove();
-        if (data.Nickname != null) {
-            data.Nickname.forEach(function (nickname) {
-                $("#user_online").append("<li class='item'><button class='button'>" + nickname + "</button></li>");
-            });
-            $(".button").click(function (data) {
-                nicknameInterlocutor = data.srcElement.innerText
-                getMessages()
-            });
-        }
+        data.data.nicknames.forEach(function (nickname) {
+            $("#user_online").append("<li class='item'><button class='button'>" + nickname + "</button></li>");
+        });
+        $(".button").click(function (data) {
+            nicknameInterlocutor = data.srcElement.innerText
+            getMessages()
+        });
     });
 };
 
@@ -74,15 +72,19 @@ var getMessages = function () {
             $("#message_input").show()
             $(".item_msg_nickname").remove();
             $(".item_message").remove();
-            if (dataresp != null) {
-                dataresp.forEach(function (data) {
-                    $("#messages").append("<dt class='item_msg_nickname'>" + data.Nickname + "</dt>");
-                    $("#messages").append("<dd class='item_message'>" + data.Message + "</dd>");
-                });
-            }
+            dataresp.data.forEach(function (data) {
+                $("#messages").append("<dt class='item_msg_nickname'>" + data.nickname + "</dt>");
+                $("#messages").append("<dd class='item_message'>" + data.message + "</dd>");
+            });
         });
     };
 };
+
+$(document).on('keypress', function (e) {
+    if (e.which == 13) {
+       $('#send_message').click();
+    }
+ });
 
 var interval = 1000 * 5; // request once per 5 seconds
 var nicknameInterlocutor

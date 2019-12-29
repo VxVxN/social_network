@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -13,6 +14,7 @@ import (
 	"social_network/src/authorization"
 	cnfg "social_network/src/config"
 	"social_network/src/log"
+	resp "social_network/src/response"
 	"social_network/src/session"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -46,14 +48,14 @@ func main() {
 	routes.HandleFunc("/registration", authorization.Registration).Methods("POST")
 	routes.HandleFunc("/registration", authorization.RegistrationForm).Methods("GET")
 
-	routes.HandleFunc("/ajax/language", language.SetLanguage).Methods("POST")
-	routes.HandleFunc("/ajax/language", language.GetLanguage).Methods("GET")
+	routes.Handle("/ajax/language", middlewareResponse(language.SetLanguage)).Methods("POST")
+	routes.Handle("/ajax/language", middlewareResponse(language.GetLanguage)).Methods("GET")
 
-	routes.HandleFunc("/ajax/online", online.SetOnline).Methods("POST")
+	routes.Handle("/ajax/online", middlewareResponse(online.SetOnline)).Methods("POST")
 
-	routes.HandleFunc("/ajax/list_users", common.ListUsers).Methods("GET")
-	routes.HandleFunc("/ajax/get_messages", common.GetMessages).Methods("GET")
-	routes.HandleFunc("/ajax/send_message", common.SendMessage).Methods("POST")
+	routes.Handle("/ajax/list_users", middlewareResponse(common.ListUsers)).Methods("GET")
+	routes.Handle("/ajax/get_messages", middlewareResponse(common.GetMessages)).Methods("GET")
+	routes.Handle("/ajax/send_message", middlewareResponse(common.SendMessage)).Methods("POST")
 
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
@@ -70,4 +72,15 @@ func mainForm(w http.ResponseWriter, r *http.Request) {
 	main.SignUp = "/registration"
 	tpl := template.Must(template.New("main").ParseFiles("templates/index.html"))
 	tpl.ExecuteTemplate(w, "index.html", main)
+}
+
+func middlewareResponse(handler func(w http.ResponseWriter, r *http.Request) resp.Response) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		resp := handler(w, r)
+		respBytes, err := json.Marshal(resp)
+		if err != nil {
+			log.ComLog.Error.Printf("Failed to marshal response in middlewareResponse. Error: %v", err)
+		}
+		w.Write(respBytes)
+	})
 }

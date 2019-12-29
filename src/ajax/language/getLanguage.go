@@ -1,18 +1,13 @@
 package language
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	cnfg "social_network/src/config"
 	"social_network/src/log"
+	resp "social_network/src/response"
 )
 
-type response struct {
-	Language string `json:language`
-}
-
-func GetLanguage(w http.ResponseWriter, r *http.Request) {
+func GetLanguage(w http.ResponseWriter, r *http.Request) resp.Response {
 	var lang string
 	langCookie, err := r.Cookie("language")
 	if err != nil {
@@ -20,14 +15,9 @@ func GetLanguage(w http.ResponseWriter, r *http.Request) {
 	} else {
 		lang = langCookie.Value
 	}
-
-	var resp response
-	resp.Language = lang
-
-	respJSON, err := json.Marshal(resp)
-	if err != nil {
-		log.ComLog.Error.Printf("Error marshal response: %v", err)
-		return
+	if lang == "" {
+		log.ComLog.Error.Printf("Failed to get language")
+		return resp.Error500("Error to get language")
 	}
-	fmt.Fprintln(w, string(respJSON))
+	return resp.Success(lang)
 }

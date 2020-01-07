@@ -14,11 +14,10 @@ import (
 	"social_network/src/authorization"
 	cnfg "social_network/src/config"
 	"social_network/src/log"
-	resp "social_network/src/response"
 	"social_network/src/session"
+	"social_network/src/tools"
 
 	_ "github.com/go-sql-driver/mysql"
-	//"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -75,7 +74,7 @@ func mainForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	tpl.ExecuteTemplate(w, "index.html", main)
 }
 
-func middlewareResponse(handler func(w http.ResponseWriter, r *http.Request) resp.Response) httprouter.Handle {
+func middlewareResponse(handler func(w http.ResponseWriter, r *http.Request) tools.Response) httprouter.Handle {
 	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		resp := handler(w, r)
 		respBytes, err := json.Marshal(resp)

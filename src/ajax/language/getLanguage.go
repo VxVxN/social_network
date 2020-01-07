@@ -4,10 +4,10 @@ import (
 	"net/http"
 	cnfg "social_network/src/config"
 	"social_network/src/log"
-	resp "social_network/src/response"
+	"social_network/src/tools"
 )
 
-func GetLanguage(w http.ResponseWriter, r *http.Request) resp.Response {
+func GetLanguage(w http.ResponseWriter, r *http.Request) tools.Response {
 	var lang string
 	langCookie, err := r.Cookie("language")
 	if err != nil {
@@ -17,7 +17,7 @@ func GetLanguage(w http.ResponseWriter, r *http.Request) resp.Response {
 	}
 	if lang == "" {
 		log.ComLog.Error.Printf("Failed to get language")
-		return resp.Error500("Error to get language")
+		return tools.Error500("Error to get language")
 	}
-	return resp.Success(lang)
+	return tools.Success(lang)
 }

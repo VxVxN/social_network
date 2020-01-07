@@ -10,7 +10,7 @@ import (
 
 	app "social_network/src/application"
 	"social_network/src/log"
-	resp "social_network/src/response"
+	"social_network/src/tools"
 )
 
 type responseMessages struct {
@@ -19,13 +19,13 @@ type responseMessages struct {
 	Time     time.Time `json:"time_sending"`
 }
 
-func GetMessages(w http.ResponseWriter, r *http.Request) resp.Response {
+func GetMessages(w http.ResponseWriter, r *http.Request) tools.Response {
 	secondNickname := r.FormValue("nickname")
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		log.ComLog.Error.Printf("Error get session token: %v", err)
-		return resp.Error400("Failed to get cookie")
+		return tools.Error400("Failed to get cookie")
 	}
 	sessionToken := c.Value
 
@@ -33,7 +33,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) resp.Response {
 	var firstID int
 	if err = row.Scan(&firstID); err != nil {
 		log.ComLog.Error.Printf("Error get id user: %v", err)
-		return resp.Error500("Failed to get first user id")
+		return tools.Error500("Failed to get first user id")
 	}
 
 	row = app.Database.QueryRow("SELECT nickname FROM users WHERE id=?", firstID)
@@ -41,7 +41,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) resp.Response {
 	err = row.Scan(&firstNickname)
 	if err != nil {
 		log.ComLog.Error.Printf("Error get user: %v", err)
-		return resp.Error500("Failed to get nickname")
+		return tools.Error500("Failed to get nickname")
 	}
 
 	row = app.Database.QueryRow("SELECT id FROM users WHERE nickname=?", secondNickname)
@@ -49,7 +49,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) resp.Response {
 	err = row.Scan(&secondID)
 	if err != nil {
 		log.ComLog.Error.Printf("Error get id by nickname: %v. Error: %v", secondNickname, err)
-		return resp.Error500("Failed to get second user id")
+		return tools.Error500("Failed to get second user id")
 	}
 
 	var messagesResult []responseMessages
@@ -57,18 +57,18 @@ func GetMessages(w http.ResponseWriter, r *http.Request) resp.Response {
 	messagesResult, err = getMessages(firstNickname, firstID, secondID)
 	if err != nil {
 		log.ComLog.Error.Printf("Error get messages: %v", err)
-		return resp.Error500("Failed to get messages")
+		return tools.Error500("Failed to get messages")
 	}
 	secondMessages, err := getMessages(secondNickname, secondID, firstID)
 	if err != nil {
 		log.ComLog.Error.Printf("Error get messages: %v", err)
-		return resp.Error500("Failed to get messages")
+		return tools.Error500("Failed to get messages")
 	}
 
 	messagesResult = append(messagesResult, secondMessages...)
 	sort.Slice(messagesResult, func(i, j int) bool { return messagesResult[i].Time.Before(messagesResult[j].Time) })
 
-	return resp.Success(messagesResult)
+	return tools.Success(messagesResult)
 }
 
 func getMessages(nickname string, firstID, secondID int) ([]responseMessages, error) {

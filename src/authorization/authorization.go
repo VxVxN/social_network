@@ -10,6 +10,7 @@ import (
 	"social_network/src/log"
 
 	uuid "github.com/google/uuid"
+	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -27,7 +28,7 @@ type authorizationPage struct {
 var aPage = authorizationPage{}
 var authorizationTemplate = template.Must(template.New("main").ParseFiles("templates/authorization.html"))
 
-func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
+func AuthorizationForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Cache-Control", "no-cache")
 
 	c, err := r.Cookie("session_token")
@@ -47,7 +48,7 @@ func AuthorizationForm(w http.ResponseWriter, r *http.Request) {
 	authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 }
 
-func Authorize(w http.ResponseWriter, r *http.Request) {
+func Authorize(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 

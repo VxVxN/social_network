@@ -8,6 +8,7 @@ import (
 	"social_network/src/log"
 	"strings"
 
+	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -19,7 +20,7 @@ type registrationPage struct {
 var rPage = registrationPage{}
 var registrationTemplate = template.Must(template.New("main").ParseFiles("templates/registration.html"))
 
-func RegistrationForm(w http.ResponseWriter, r *http.Request) {
+func RegistrationForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	rPage.IsRegistration = true
 	rPage.Action = "/registration"
 	rPage.GoMain = "/"
@@ -27,7 +28,7 @@ func RegistrationForm(w http.ResponseWriter, r *http.Request) {
 	registrationTemplate.ExecuteTemplate(w, "registration.html", rPage)
 }
 
-func Registration(w http.ResponseWriter, r *http.Request) {
+func Registration(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	username := r.FormValue("username")
 	fname := r.FormValue("fname")
 	lname := r.FormValue("lname")

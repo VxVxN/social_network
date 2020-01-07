@@ -18,7 +18,8 @@ import (
 	"social_network/src/session"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
+	//"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 )
 
 type Page struct {
@@ -39,23 +40,23 @@ func main() {
 
 	app.Database = db
 
-	routes := mux.NewRouter()
-	routes.HandleFunc("/", mainForm).Methods("GET")
-	routes.HandleFunc("/main", session.MainPage).Methods("GET")
-	routes.HandleFunc("/logout", session.LogOut).Methods("GET")
-	routes.HandleFunc("/authorization", authorization.Authorize).Methods("POST")
-	routes.HandleFunc("/authorization", authorization.AuthorizationForm).Methods("GET")
-	routes.HandleFunc("/registration", authorization.Registration).Methods("POST")
-	routes.HandleFunc("/registration", authorization.RegistrationForm).Methods("GET")
+	routes := httprouter.New()
+	routes.GET("/", mainForm)
+	routes.GET("/main", session.MainPage)
+	routes.GET("/logout", session.LogOut)
+	routes.POST("/authorization", authorization.Authorize)
+	routes.GET("/authorization", authorization.AuthorizationForm)
+	routes.POST("/registration", authorization.Registration)
+	routes.GET("/registration", authorization.RegistrationForm)
 
-	routes.Handle("/ajax/language", middlewareResponse(language.SetLanguage)).Methods("POST")
-	routes.Handle("/ajax/language", middlewareResponse(language.GetLanguage)).Methods("GET")
+	routes.POST("/ajax/language", middlewareResponse(language.SetLanguage))
+	routes.GET("/ajax/language", middlewareResponse(language.GetLanguage))
 
-	routes.Handle("/ajax/online", middlewareResponse(online.SetOnline)).Methods("POST")
+	routes.POST("/ajax/online", middlewareResponse(online.SetOnline))
 
-	routes.Handle("/ajax/list_users", middlewareResponse(common.ListUsers)).Methods("GET")
-	routes.Handle("/ajax/get_messages", middlewareResponse(common.GetMessages)).Methods("GET")
-	routes.Handle("/ajax/send_message", middlewareResponse(common.SendMessage)).Methods("POST")
+	routes.GET("/ajax/list_users", middlewareResponse(common.ListUsers))
+	routes.GET("/ajax/get_messages", middlewareResponse(common.GetMessages))
+	routes.POST("/ajax/send_message", middlewareResponse(common.SendMessage))
 
 	fs := http.FileServer(http.Dir("static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
@@ -65,7 +66,7 @@ func main() {
 	http.ListenAndServe(port, nil)
 }
 
-func mainForm(w http.ResponseWriter, r *http.Request) {
+func mainForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	main := Page{}
 	main.Title = "Main"
 	main.LogIn = "/authorization"
@@ -74,8 +75,8 @@ func mainForm(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "index.html", main)
 }
 
-func middlewareResponse(handler func(w http.ResponseWriter, r *http.Request) resp.Response) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func middlewareResponse(handler func(w http.ResponseWriter, r *http.Request) resp.Response) httprouter.Handle {
+	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		resp := handler(w, r)
 		respBytes, err := json.Marshal(resp)
 		if err != nil {

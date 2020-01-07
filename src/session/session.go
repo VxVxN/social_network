@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
+	"github.com/julienschmidt/httprouter"
 )
 
 type Page struct {
@@ -29,7 +30,7 @@ var mainTemplate = template.Must(template.New("main").ParseFiles("templates/main
 
 var Store = sessions.NewCookieStore([]byte(securecookie.GenerateRandomKey(32)))
 
-func MainPage(w http.ResponseWriter, r *http.Request) {
+func MainPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -54,7 +55,7 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 	mainTemplate.ExecuteTemplate(w, "main.html", aPage)
 }
 
-func LogOut(w http.ResponseWriter, r *http.Request) {
+func LogOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Cache-Control", "no-cache")
 	c, err := r.Cookie("session_token")
 	if err != nil {

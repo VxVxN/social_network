@@ -19,7 +19,7 @@ $(function () {
         url: "/ajax/language",
     }).done(function (data) {
         data = JSON.parse(data);
-        changeLangOnPage(data.Language);
+        changeLangOnPage(data.data);
         requestListUsers()
     });
 });

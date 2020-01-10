@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"strconv"
 
-	"social_network/src/ajax/common"
-	"social_network/src/ajax/language"
-	"social_network/src/ajax/online"
-	app "social_network/src/application"
-	"social_network/src/authorization"
-	cnfg "social_network/src/config"
-	"social_network/src/log"
-	"social_network/src/session"
-	"social_network/src/tools"
+	"social_network/internal/ajax/common"
+	"social_network/internal/ajax/language"
+	"social_network/internal/ajax/online"
+	app "social_network/internal/application"
+	"social_network/internal/authorization"
+	cnfg "social_network/internal/config"
+	"social_network/internal/log"
+	"social_network/internal/session"
+	"social_network/internal/tools"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
@@ -57,7 +57,7 @@ func main() {
 	routes.GET("/ajax/get_messages", middlewareResponse(common.GetMessages))
 	routes.POST("/ajax/send_message", middlewareResponse(common.SendMessage))
 
-	fs := http.FileServer(http.Dir("static/"))
+	fs := http.FileServer(http.Dir("web/static/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	http.Handle("/", routes)
@@ -70,7 +70,7 @@ func mainForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	main.Title = "Main"
 	main.LogIn = "/authorization"
 	main.SignUp = "/registration"
-	tpl := template.Must(template.New("main").ParseFiles("templates/index.html"))
+	tpl := template.Must(template.New("main").ParseFiles("web/templates/index.html"))
 	tpl.ExecuteTemplate(w, "index.html", main)
 }
 

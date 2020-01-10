@@ -2,9 +2,9 @@ package language
 
 import (
 	"net/http"
-	cnfg "social_network/src/config"
-	"social_network/src/log"
-	"social_network/src/tools"
+	cnfg "social_network/internal/config"
+	"social_network/internal/log"
+	"social_network/internal/tools"
 )
 
 func GetLanguage(w http.ResponseWriter, r *http.Request) tools.Response {

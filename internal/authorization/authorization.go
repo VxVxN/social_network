@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	app "social_network/src/application"
-	"social_network/src/log"
+	app "social_network/internal/application"
+	"social_network/internal/log"
 
 	uuid "github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
@@ -26,7 +26,7 @@ type authorizationPage struct {
 }
 
 var aPage = authorizationPage{}
-var authorizationTemplate = template.Must(template.New("main").ParseFiles("templates/authorization.html"))
+var authorizationTemplate = template.Must(template.New("main").ParseFiles("web/templates/authorization.html"))
 
 func AuthorizationForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Cache-Control", "no-cache")

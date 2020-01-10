@@ -2,8 +2,8 @@ package language
 
 import (
 	"net/http"
-	"social_network/src/log"
-	"social_network/src/tools"
+	"social_network/internal/log"
+	"social_network/internal/tools"
 )
 
 type requestLanguage struct {

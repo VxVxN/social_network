@@ -5,8 +5,8 @@ import (
 	"html/template"
 	"net/http"
 
-	app "social_network/src/application"
-	"social_network/src/log"
+	app "social_network/internal/application"
+	"social_network/internal/log"
 
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
@@ -26,7 +26,7 @@ type mainPage struct {
 var Database *sql.DB
 
 var aPage = mainPage{}
-var mainTemplate = template.Must(template.New("main").ParseFiles("templates/main.html"))
+var mainTemplate = template.Must(template.New("main").ParseFiles("web/templates/main.html"))
 
 var Store = sessions.NewCookieStore([]byte(securecookie.GenerateRandomKey(32)))
 

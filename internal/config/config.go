@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-	"social_network/src/log"
+	"social_network/internal/log"
 )
 
 type config struct {

@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"html/template"
 	"net/http"
-	app "social_network/src/application"
-	"social_network/src/log"
+	app "social_network/internal/application"
+	"social_network/internal/log"
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
@@ -18,7 +18,7 @@ type registrationPage struct {
 }
 
 var rPage = registrationPage{}
-var registrationTemplate = template.Must(template.New("main").ParseFiles("templates/registration.html"))
+var registrationTemplate = template.Must(template.New("main").ParseFiles("web/templates/registration.html"))
 
 func RegistrationForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	rPage.IsRegistration = true

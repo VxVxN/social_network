@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	app "social_network/src/application"
-	"social_network/src/log"
-	"social_network/src/tools"
+	app "social_network/internal/application"
+	"social_network/internal/log"
+	"social_network/internal/tools"
 )
 
 type responseMessages struct {

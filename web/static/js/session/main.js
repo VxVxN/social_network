@@ -1,6 +1,6 @@
 $(function () {
-    $.getScript("/static/js/online.js");
-    $.getScript("/static/js/language.js");
+    $.getScript("/web/static/js/online.js");
+    $.getScript("/web/static/js/language.js");
 
     $("#send_message").hide();
     $("#message_input").hide();

@@ -8,7 +8,15 @@ import (
 )
 
 type config struct {
-	Port            int    `json:"PORT"`
+	WebServerHostname string `json:"WEB_SERVER_HOSTNAME"`
+	WebServerPort     int    `json:"WEB_SERVER_PORT"`
+
+	AJAXServerHostname string `json:"AJAX_SERVER_HOSTNAME"`
+	AJAXServerPort     int    `json:"AJAX_SERVER_PORT"`
+
+	ReverseProxyServerHostname string `json:"REVERSE_PROXY_HOSTNAME"`
+	ReverseProxyServerPort     int    `json:"REVERSE_PROXY_SERVER"`
+
 	MysqlName       string `json:"MYSQL_NAME"`
 	MysqlPassword   string `json:"MYSQL_PASSWORD"`
 	MysqlIP         string `json:"MYSQL_IP"`

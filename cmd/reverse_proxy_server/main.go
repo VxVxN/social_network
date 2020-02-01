@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"social_network/cmd/reverse_proxy_server/context"
 	cnfg "social_network/internal/config"
 	"social_network/internal/log"
 	"strconv"
@@ -46,13 +47,15 @@ func handleRequestAndRedirect(res http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	log.ComLog.Info.Println("Reverse proxy server start.")
+	context := &context.Context{Log: log.Init("reverse_proxy_server.log")}
+
+	context.Log.Info.Println("Reverse proxy server start.")
 
 	http.HandleFunc("/", handleRequestAndRedirect)
 
 	port := ":" + strconv.Itoa(cnfg.Config.ReverseProxyServerPort)
 	if err := http.ListenAndServe(port, nil); err != nil {
-		log.ComLog.Fatal.Printf("Failed to listen and serve port: %v. Error: %v", port, err)
+		context.Log.Fatal.Printf("Failed to listen and serve port: %v. Error: %v", port, err)
 		panic(err)
 	}
 }

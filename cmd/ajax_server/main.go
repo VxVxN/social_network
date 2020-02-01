@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"social_network/cmd/ajax_server/context"
 	"social_network/internal/ajax/common"
 	"social_network/internal/ajax/language"
 	"social_network/internal/ajax/online"
@@ -19,11 +20,13 @@ import (
 )
 
 func main() {
-	log.ComLog.Info.Println("Ajax server start.")
+	context := &context.Context{Log: log.Init("ajax_server.log")}
+
+	context.Log.Info.Println("Ajax server start.")
 	mysqlPort := strconv.Itoa(cnfg.Config.MysqlPort)
 	db, err := sql.Open("mysql", cnfg.Config.MysqlName+":"+cnfg.Config.MysqlPassword+"@tcp("+cnfg.Config.MysqlIP+":"+mysqlPort+")/social_network")
 	if err != nil {
-		log.ComLog.Fatal.Printf("Error open mysql: %v", err)
+		context.Log.Fatal.Printf("Error open mysql: %v", err)
 		panic(err)
 	}
 	defer db.Close()
@@ -31,29 +34,29 @@ func main() {
 	app.Database = db
 
 	routes := httprouter.New()
-	routes.POST("/ajax/language", middlewareResponse(language.SetLanguage))
-	routes.GET("/ajax/language", middlewareResponse(language.GetLanguage))
+	routes.POST("/ajax/language", middleware(language.SetLanguage, context))
+	routes.GET("/ajax/language", middleware(language.GetLanguage, context))
 
-	routes.POST("/ajax/online", middlewareResponse(online.SetOnline))
+	routes.POST("/ajax/online", middleware(online.SetOnline, context))
 
-	routes.GET("/ajax/list_users", middlewareResponse(common.ListUsers))
-	routes.GET("/ajax/get_messages", middlewareResponse(common.GetMessages))
-	routes.POST("/ajax/send_message", middlewareResponse(common.SendMessage))
+	routes.GET("/ajax/list_users", middleware(common.ListUsers, context))
+	routes.GET("/ajax/get_messages", middleware(common.GetMessages, context))
+	routes.POST("/ajax/send_message", middleware(common.SendMessage, context))
 
 	http.Handle("/", routes)
 	port := ":" + strconv.Itoa(cnfg.Config.AJAXServerPort)
 	if err := http.ListenAndServe(port, nil); err != nil {
-		log.ComLog.Fatal.Printf("Failed to listen and serve port: %v. Error: %v", port, err)
+		context.Log.Fatal.Printf("Failed to listen and serve port: %v. Error: %v", port, err)
 		panic(err)
 	}
 }
 
-func middlewareResponse(handler func(w http.ResponseWriter, r *http.Request) tools.Response) httprouter.Handle {
+func middleware(handler func(http.ResponseWriter, *http.Request, *context.Context) tools.Response, context *context.Context) httprouter.Handle {
 	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		resp := handler(w, r)
+		resp := handler(w, r, context)
 		respBytes, err := json.Marshal(resp)
 		if err != nil {
-			log.ComLog.Error.Printf("Failed to marshal response in middlewareResponse. Error: %v", err)
+			context.Log.Error.Printf("Failed to marshal response in middlewareResponse. Error: %v", err)
 		}
 		w.Write(respBytes)
 	})

@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"social_network/cmd/ajax_server/context"
 	app "social_network/internal/application"
-	"social_network/internal/log"
 	"social_network/internal/tools"
 )
 
@@ -13,10 +13,10 @@ type responseListUsers struct {
 	Nicknames []string `json:"nicknames"`
 }
 
-func ListUsers(w http.ResponseWriter, r *http.Request) tools.Response {
+func ListUsers(w http.ResponseWriter, r *http.Request, ctx *context.Context) tools.Response {
 	c, err := r.Cookie("session_token")
 	if err != nil {
-		log.ComLog.Error.Printf("Error get session token: %v", err)
+		ctx.Log.Error.Printf("Error get session token: %v", err)
 		return tools.Error400("Failed to get cookie")
 	}
 	sessionToken := c.Value
@@ -24,7 +24,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request) tools.Response {
 	timeAddMinute := time.Now().Add(-time.Minute)
 	rows, err := app.Database.Query("SELECT nickname FROM users WHERE id IN (SELECT user_id FROM sessions WHERE last_online>? AND session!=?)", timeAddMinute, sessionToken)
 	if err != nil {
-		log.ComLog.Error.Printf("Error get list users: %v", err)
+		ctx.Log.Error.Printf("Error get list users: %v", err)
 		return tools.Error500("Failed to get users")
 	}
 	defer rows.Close()

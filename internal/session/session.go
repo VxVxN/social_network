@@ -5,12 +5,11 @@ import (
 	"html/template"
 	"net/http"
 
+	"social_network/cmd/web_server/context"
 	app "social_network/internal/application"
-	"social_network/internal/log"
 
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
-	"github.com/julienschmidt/httprouter"
 )
 
 type Page struct {
@@ -30,7 +29,7 @@ var mainTemplate = template.Must(template.New("main").ParseFiles("web/templates/
 
 var Store = sessions.NewCookieStore([]byte(securecookie.GenerateRandomKey(32)))
 
-func MainPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func MainPage(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -46,7 +45,7 @@ func MainPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var nickname string
 	err = row.Scan(&nickname)
 	if err != nil {
-		log.ComLog.Error.Printf("Error get user: %v", err)
+		ctx.Log.Error.Printf("Error get user: %v", err)
 		return
 	}
 	aPage.Nickname = nickname
@@ -55,7 +54,7 @@ func MainPage(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	mainTemplate.ExecuteTemplate(w, "main.html", aPage)
 }
 
-func LogOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func LogOut(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	w.Header().Set("Cache-Control", "no-cache")
 	c, err := r.Cookie("session_token")
 	if err != nil {

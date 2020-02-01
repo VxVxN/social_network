@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-type logger struct {
+type Logger struct {
 	Trace   *slog.Logger
 	Debug   *slog.Logger
 	Info    *slog.Logger
@@ -16,14 +16,10 @@ type logger struct {
 	file    *os.File
 }
 
-var ComLog *logger
+var ComLog = Init("common.log")
 
-func init() {
-	ComLog = Init("common.log")
-}
-
-func Init(nameFile string) *logger {
-	var sLogger logger
+func Init(nameFile string) *Logger {
+	var sLogger Logger
 	var err error
 	sLogger.file, err = os.OpenFile("logs/"+nameFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
@@ -55,7 +51,7 @@ func Init(nameFile string) *logger {
 	return &sLogger
 }
 
-func (l *logger) RunTrace() {
+func (l *Logger) RunTrace() {
 	l.Trace = slog.New(l.file,
 		"TRACE:   ",
 		slog.Ldate|slog.Ltime|slog.Lshortfile)

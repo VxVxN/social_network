@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"html/template"
 	"net/http"
-	app "social_network/internal/application"
-	"social_network/internal/log"
 	"strings"
 
-	"github.com/julienschmidt/httprouter"
+	"social_network/cmd/web_server/context"
+	app "social_network/internal/application"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,7 +20,7 @@ type registrationPage struct {
 var rPage = registrationPage{}
 var registrationTemplate = template.Must(template.New("main").ParseFiles("web/templates/registration.html"))
 
-func RegistrationForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func RegistrationForm(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	rPage.IsRegistration = true
 	rPage.Action = "/registration"
 	rPage.GoMain = "/"
@@ -28,7 +28,7 @@ func RegistrationForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	registrationTemplate.ExecuteTemplate(w, "registration.html", rPage)
 }
 
-func Registration(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func Registration(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	username := r.FormValue("username")
 	fname := r.FormValue("fname")
 	lname := r.FormValue("lname")
@@ -49,7 +49,11 @@ func Registration(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 		}
 		registrationTemplate.ExecuteTemplate(w, "registration.html", rPage)
 	} else {
-		password = hashAndSalt([]byte(password))
+		password, err := hashAndSalt([]byte(password))
+		if err != nil {
+			ctx.Log.Error.Println(err)
+			return
+		}
 		email = strings.ToLower(email)
 		row := app.Database.QueryRow("INSERT INTO users (nickname, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)", username, fname, lname, email, password)
 		_ = row.Scan()
@@ -57,11 +61,11 @@ func Registration(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	}
 }
 
-func hashAndSalt(pwd []byte) string {
+func hashAndSalt(pwd []byte) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
-		log.ComLog.Error.Println(err)
+		return "", err
 	}
 
-	return string(hash)
+	return string(hash), nil
 }

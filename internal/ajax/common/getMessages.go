@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"social_network/cmd/ajax_server/context"
 	app "social_network/internal/application"
-	"social_network/internal/log"
 	"social_network/internal/tools"
 )
 
@@ -19,12 +19,12 @@ type responseMessages struct {
 	Time     time.Time `json:"time_sending"`
 }
 
-func GetMessages(w http.ResponseWriter, r *http.Request) tools.Response {
+func GetMessages(w http.ResponseWriter, r *http.Request, ctx *context.Context) tools.Response {
 	secondNickname := r.FormValue("nickname")
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
-		log.ComLog.Error.Printf("Error get session token: %v", err)
+		ctx.Log.Error.Printf("Error get session token: %v", err)
 		return tools.Error400("Failed to get cookie")
 	}
 	sessionToken := c.Value
@@ -32,7 +32,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) tools.Response {
 	row := app.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
 	var firstID int
 	if err = row.Scan(&firstID); err != nil {
-		log.ComLog.Error.Printf("Error get id user: %v", err)
+		ctx.Log.Error.Printf("Error get id user: %v", err)
 		return tools.Error500("Failed to get first user id")
 	}
 
@@ -40,7 +40,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) tools.Response {
 	var firstNickname string
 	err = row.Scan(&firstNickname)
 	if err != nil {
-		log.ComLog.Error.Printf("Error get user: %v", err)
+		ctx.Log.Error.Printf("Error get user: %v", err)
 		return tools.Error500("Failed to get nickname")
 	}
 
@@ -48,7 +48,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request) tools.Response {
 	var secondID int
 	err = row.Scan(&secondID)
 	if err != nil {
-		log.ComLog.Error.Printf("Error get id by nickname: %v. Error: %v", secondNickname, err)
+		ctx.Log.Error.Printf("Error get id by nickname: %v. Error: %v", secondNickname, err)
 		return tools.Error500("Failed to get second user id")
 	}
 
@@ -56,12 +56,12 @@ func GetMessages(w http.ResponseWriter, r *http.Request) tools.Response {
 
 	messagesResult, err = getMessages(firstNickname, firstID, secondID)
 	if err != nil {
-		log.ComLog.Error.Printf("Error get messages: %v", err)
+		ctx.Log.Error.Printf("Error get messages: %v", err)
 		return tools.Error500("Failed to get messages")
 	}
 	secondMessages, err := getMessages(secondNickname, secondID, firstID)
 	if err != nil {
-		log.ComLog.Error.Printf("Error get messages: %v", err)
+		ctx.Log.Error.Printf("Error get messages: %v", err)
 		return tools.Error500("Failed to get messages")
 	}
 

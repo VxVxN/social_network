@@ -6,11 +6,10 @@ import (
 	"net/http"
 	"time"
 
+	"social_network/cmd/web_server/context"
 	app "social_network/internal/application"
-	"social_network/internal/log"
 
 	uuid "github.com/google/uuid"
-	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -28,7 +27,7 @@ type authorizationPage struct {
 var aPage = authorizationPage{}
 var authorizationTemplate = template.Must(template.New("main").ParseFiles("web/templates/authorization.html"))
 
-func AuthorizationForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func AuthorizationForm(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	w.Header().Set("Cache-Control", "no-cache")
 
 	c, err := r.Cookie("session_token")
@@ -48,7 +47,7 @@ func AuthorizationForm(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 	authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 }
 
-func Authorize(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func Authorize(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
@@ -57,7 +56,7 @@ func Authorize(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	var nickname, hashPassword string
 	err := row.Scan(&id, &nickname, &hashPassword)
 	if err != nil {
-		log.ComLog.Error.Printf("Error geting user data: %v", err)
+		ctx.Log.Error.Printf("Error geting user data: %v", err)
 		aPage.Error = errors.New("User is not found").Error()
 		authorizationTemplate.ExecuteTemplate(w, "authorization.html", aPage)
 	} else {
@@ -67,7 +66,8 @@ func Authorize(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 			err := row.Scan()
 			if err != nil {
-				log.ComLog.Error.Printf("Error create session: %v", err)
+				ctx.Log.Error.Printf("Error create session: %v", err)
+				return
 			}
 
 			http.SetCookie(w, &http.Cookie{

@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"social_network/cmd/web_server/context"
-	app "social_network/internal/application"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -35,8 +34,8 @@ func Registration(w http.ResponseWriter, r *http.Request, ctx *context.Context) 
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	nicknameRow := app.Database.QueryRow("SELECT nickname FROM users WHERE nickname=?", username)
-	emailRow := app.Database.QueryRow("SELECT email FROM users WHERE email=?", email)
+	nicknameRow := ctx.Database.QueryRow("SELECT nickname FROM users WHERE nickname=?", username)
+	emailRow := ctx.Database.QueryRow("SELECT email FROM users WHERE email=?", email)
 	errNickname := nicknameRow.Scan()
 	errEmail := emailRow.Scan()
 	if errEmail != sql.ErrNoRows || errNickname != sql.ErrNoRows {
@@ -55,7 +54,7 @@ func Registration(w http.ResponseWriter, r *http.Request, ctx *context.Context) 
 			return
 		}
 		email = strings.ToLower(email)
-		row := app.Database.QueryRow("INSERT INTO users (nickname, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)", username, fname, lname, email, password)
+		row := ctx.Database.QueryRow("INSERT INTO users (nickname, fname, lname, email, password) VALUES (?, ?, ?, ?, ?)", username, fname, lname, email, password)
 		_ = row.Scan()
 		http.Redirect(w, r, "/authorization", http.StatusMovedPermanently)
 	}

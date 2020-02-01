@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"social_network/cmd/ajax_server/context"
-	app "social_network/internal/application"
 	"social_network/internal/tools"
 )
 
@@ -28,7 +27,7 @@ func SetOnline(w http.ResponseWriter, r *http.Request, ctx *context.Context) too
 	}
 	sessionToken := c.Value
 
-	row := app.Database.QueryRow("UPDATE sessions SET last_online=? WHERE session=?", time.Now(), sessionToken)
+	row := ctx.Database.QueryRow("UPDATE sessions SET last_online=? WHERE session=?", time.Now(), sessionToken)
 	_ = row.Scan()
 	return tools.Success(nil)
 }

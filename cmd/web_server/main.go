@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"social_network/cmd/web_server/context"
-	app "social_network/internal/application"
 	"social_network/internal/authorization"
 	cnfg "social_network/internal/config"
 	"social_network/internal/log"
@@ -35,7 +34,7 @@ func main() {
 	}
 	defer db.Close()
 
-	app.Database = db
+	context.Database = db
 
 	routes := httprouter.New()
 	routes.GET("/", middleware(mainForm, context))

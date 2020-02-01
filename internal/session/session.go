@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"social_network/cmd/web_server/context"
-	app "social_network/internal/application"
 
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
@@ -41,7 +40,7 @@ func MainPage(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	}
 	sessionToken := c.Value
 
-	row := app.Database.QueryRow("SELECT nickname FROM users WHERE id IN (SELECT user_id FROM sessions WHERE session=?)", sessionToken)
+	row := ctx.Database.QueryRow("SELECT nickname FROM users WHERE id IN (SELECT user_id FROM sessions WHERE session=?)", sessionToken)
 	var nickname string
 	err = row.Scan(&nickname)
 	if err != nil {
@@ -66,7 +65,7 @@ func LogOut(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 		return
 	}
 	sessionToken := c.Value
-	row := app.Database.QueryRow("DELETE FROM sessions WHERE session=?", sessionToken)
+	row := ctx.Database.QueryRow("DELETE FROM sessions WHERE session=?", sessionToken)
 	_ = row.Scan()
 
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)

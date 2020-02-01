@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"social_network/cmd/web_server/context"
-	app "social_network/internal/application"
 
 	uuid "github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -33,7 +32,7 @@ func AuthorizationForm(w http.ResponseWriter, r *http.Request, ctx *context.Cont
 	c, err := r.Cookie("session_token")
 	if err == nil {
 		sessionToken := c.Value
-		row := app.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
+		row := ctx.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
 		var userID int
 		err = row.Scan(&userID)
 		if err == nil && userID != 0 {
@@ -51,7 +50,7 @@ func Authorize(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	row := app.Database.QueryRow("SELECT id, nickname, password FROM users WHERE email=?", email)
+	row := ctx.Database.QueryRow("SELECT id, nickname, password FROM users WHERE email=?", email)
 	var id int
 	var nickname, hashPassword string
 	err := row.Scan(&id, &nickname, &hashPassword)
@@ -62,7 +61,7 @@ func Authorize(w http.ResponseWriter, r *http.Request, ctx *context.Context) {
 	} else {
 		if comparePasswords(hashPassword, []byte(password)) {
 			sessionToken := uuid.New().String()
-			row = app.Database.QueryRow("INSERT INTO sessions (session, user_id, last_online) VALUES (?, ?, ?)", sessionToken, id, time.Now())
+			row = ctx.Database.QueryRow("INSERT INTO sessions (session, user_id, last_online) VALUES (?, ?, ?)", sessionToken, id, time.Now())
 
 			err := row.Scan()
 			if err != nil {

@@ -1,7 +1,11 @@
 package context
 
-import "social_network/internal/log"
+import (
+	"database/sql"
+	"social_network/internal/log"
+)
 
 type Context struct {
-	Log *log.Logger
+	Database *sql.DB
+	Log      *log.Logger
 }

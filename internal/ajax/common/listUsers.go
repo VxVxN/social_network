@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"social_network/cmd/ajax_server/context"
-	app "social_network/internal/application"
 	"social_network/internal/tools"
 )
 
@@ -22,7 +21,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request, ctx *context.Context) too
 	sessionToken := c.Value
 
 	timeAddMinute := time.Now().Add(-time.Minute)
-	rows, err := app.Database.Query("SELECT nickname FROM users WHERE id IN (SELECT user_id FROM sessions WHERE last_online>? AND session!=?)", timeAddMinute, sessionToken)
+	rows, err := ctx.Database.Query("SELECT nickname FROM users WHERE id IN (SELECT user_id FROM sessions WHERE last_online>? AND session!=?)", timeAddMinute, sessionToken)
 	if err != nil {
 		ctx.Log.Error.Printf("Error get list users: %v", err)
 		return tools.Error500("Failed to get users")

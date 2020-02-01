@@ -3,7 +3,6 @@ package common
 import (
 	"net/http"
 	"social_network/cmd/ajax_server/context"
-	app "social_network/internal/application"
 	"social_network/internal/tools"
 	"time"
 )
@@ -28,20 +27,20 @@ func SendMessage(w http.ResponseWriter, r *http.Request, ctx *context.Context) t
 	}
 	sessionToken := c.Value
 
-	row := app.Database.QueryRow("SELECT id FROM users WHERE nickname=?", req.Nickname)
+	row := ctx.Database.QueryRow("SELECT id FROM users WHERE nickname=?", req.Nickname)
 	var secondID int
 	if err = row.Scan(&secondID); err != nil {
 		ctx.Log.Error.Printf("Error get id by nickname: %v. Error: %v", req.Nickname, err)
 		return tools.Error500("Failed to get id by nickname")
 	}
 
-	row = app.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
+	row = ctx.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
 	var firstID int
 	if err = row.Scan(&firstID); err != nil {
 		ctx.Log.Error.Printf("Error get id user: %v", err)
 		return tools.Error500("Failed to get id user")
 	}
-	row = app.Database.QueryRow("INSERT INTO messages (first_id, message, second_id, time_sending) VALUES (?, ?, ?, ?)", firstID, req.Message, secondID, time.Now())
+	row = ctx.Database.QueryRow("INSERT INTO messages (first_id, message, second_id, time_sending) VALUES (?, ?, ?, ?)", firstID, req.Message, secondID, time.Now())
 	_ = row.Scan()
 
 	return tools.Success(nil)

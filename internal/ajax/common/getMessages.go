@@ -1,6 +1,7 @@
 package common
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 	"time"
 
 	"social_network/cmd/ajax_server/context"
-	app "social_network/internal/application"
 	"social_network/internal/tools"
 )
 
@@ -29,14 +29,14 @@ func GetMessages(w http.ResponseWriter, r *http.Request, ctx *context.Context) t
 	}
 	sessionToken := c.Value
 
-	row := app.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
+	row := ctx.Database.QueryRow("SELECT user_id FROM sessions WHERE session=?", sessionToken)
 	var firstID int
 	if err = row.Scan(&firstID); err != nil {
 		ctx.Log.Error.Printf("Error get id user: %v", err)
 		return tools.Error500("Failed to get first user id")
 	}
 
-	row = app.Database.QueryRow("SELECT nickname FROM users WHERE id=?", firstID)
+	row = ctx.Database.QueryRow("SELECT nickname FROM users WHERE id=?", firstID)
 	var firstNickname string
 	err = row.Scan(&firstNickname)
 	if err != nil {
@@ -44,7 +44,7 @@ func GetMessages(w http.ResponseWriter, r *http.Request, ctx *context.Context) t
 		return tools.Error500("Failed to get nickname")
 	}
 
-	row = app.Database.QueryRow("SELECT id FROM users WHERE nickname=?", secondNickname)
+	row = ctx.Database.QueryRow("SELECT id FROM users WHERE nickname=?", secondNickname)
 	var secondID int
 	err = row.Scan(&secondID)
 	if err != nil {
@@ -54,12 +54,12 @@ func GetMessages(w http.ResponseWriter, r *http.Request, ctx *context.Context) t
 
 	var messagesResult []responseMessages
 
-	messagesResult, err = getMessages(firstNickname, firstID, secondID)
+	messagesResult, err = getMessages(firstNickname, firstID, secondID, ctx.Database)
 	if err != nil {
 		ctx.Log.Error.Printf("Error get messages: %v", err)
 		return tools.Error500("Failed to get messages")
 	}
-	secondMessages, err := getMessages(secondNickname, secondID, firstID)
+	secondMessages, err := getMessages(secondNickname, secondID, firstID, ctx.Database)
 	if err != nil {
 		ctx.Log.Error.Printf("Error get messages: %v", err)
 		return tools.Error500("Failed to get messages")
@@ -71,8 +71,8 @@ func GetMessages(w http.ResponseWriter, r *http.Request, ctx *context.Context) t
 	return tools.Success(messagesResult)
 }
 
-func getMessages(nickname string, firstID, secondID int) ([]responseMessages, error) {
-	rows, err := app.Database.Query("SELECT message, time_sending FROM messages WHERE first_id=? AND second_id=?", firstID, secondID)
+func getMessages(nickname string, firstID, secondID int, database *sql.DB) ([]responseMessages, error) {
+	rows, err := database.Query("SELECT message, time_sending FROM messages WHERE first_id=? AND second_id=?", firstID, secondID)
 	if err != nil {
 		errText := fmt.Sprintf("Error get list messages: %v", err)
 		return nil, errors.New(errText)

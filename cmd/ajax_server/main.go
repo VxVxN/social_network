@@ -10,7 +10,6 @@ import (
 	"social_network/internal/ajax/common"
 	"social_network/internal/ajax/language"
 	"social_network/internal/ajax/online"
-	app "social_network/internal/application"
 	cnfg "social_network/internal/config"
 	"social_network/internal/log"
 	"social_network/internal/tools"
@@ -31,7 +30,7 @@ func main() {
 	}
 	defer db.Close()
 
-	app.Database = db
+	context.Database = db
 
 	routes := httprouter.New()
 	routes.POST("/ajax/language", middleware(language.SetLanguage, context))

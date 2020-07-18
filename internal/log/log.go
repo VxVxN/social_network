@@ -16,36 +16,43 @@ type Logger struct {
 	file    *os.File
 }
 
-var ComLog = Init("common.log")
+var ComLog = Init("common.log", false)
 
-func Init(nameFile string) *Logger {
+func Init(nameFile string, isTest bool) *Logger {
 	var sLogger Logger
 	var err error
-	sLogger.file, err = os.OpenFile("logs/"+nameFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		slog.Fatalln("Failed to open log file")
+	baseDir := os.Getenv("BASE_DIR")
+	writer := ioutil.Discard
+
+	if !isTest {
+		sLogger.file, err = os.OpenFile(baseDir+"/logs/"+nameFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err != nil {
+			slog.Fatalln("Failed to open log file")
+		}
+		writer = sLogger.file
 	}
+
 	sLogger.Trace = slog.New(ioutil.Discard,
 		"TRACE:   ",
 		slog.Ldate|slog.Ltime|slog.Lshortfile)
 
-	sLogger.Debug = slog.New(sLogger.file,
+	sLogger.Debug = slog.New(writer,
 		"DEBUG:   ",
 		slog.Ldate|slog.Ltime|slog.Lshortfile)
 
-	sLogger.Info = slog.New(sLogger.file,
+	sLogger.Info = slog.New(writer,
 		"INFO:    ",
 		slog.Ldate|slog.Ltime|slog.Lshortfile)
 
-	sLogger.Warning = slog.New(sLogger.file,
+	sLogger.Warning = slog.New(writer,
 		"WARNING: ",
 		slog.Ldate|slog.Ltime|slog.Lshortfile)
 
-	sLogger.Error = slog.New(sLogger.file,
+	sLogger.Error = slog.New(writer,
 		"ERROR:   ",
 		slog.Ldate|slog.Ltime|slog.Lshortfile)
 
-	sLogger.Fatal = slog.New(sLogger.file,
+	sLogger.Fatal = slog.New(writer,
 		"FATAL:   ",
 		slog.Ldate|slog.Ltime|slog.Lshortfile)
 	return &sLogger

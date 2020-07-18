@@ -18,7 +18,14 @@ func SetLanguage(w http.ResponseWriter, r *http.Request, ctx *context.Context) t
 		return tools.Error400("Failed to unmarshal body")
 	}
 
-	cookie := http.Cookie{Name: "language", Value: req.Language}
+	lang := req.Language
+
+	if !tools.ContainsString(lang, allLangs) {
+		ctx.Log.Error.Printf("Invalid language. Value: %s", lang)
+		return tools.Error400("Invalid language")
+	}
+
+	cookie := http.Cookie{Name: "language", Value: lang}
 
 	http.SetCookie(w, &cookie)
 

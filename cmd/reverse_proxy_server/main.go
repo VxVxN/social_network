@@ -47,7 +47,7 @@ func handleRequestAndRedirect(res http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	context := &context.Context{Log: log.Init("reverse_proxy_server.log")}
+	context := &context.Context{Log: log.Init("reverse_proxy_server.log", false)}
 
 	context.Log.Info.Println("Reverse proxy server start.")
 

@@ -19,7 +19,7 @@ import (
 )
 
 func main() {
-	context := &context.Context{Log: log.Init("ajax_server.log")}
+	context := &context.Context{Log: log.Init("ajax_server.log", false)}
 
 	context.Log.Info.Println("Ajax server start.")
 	mysqlPort := strconv.Itoa(cnfg.Config.MysqlPort)

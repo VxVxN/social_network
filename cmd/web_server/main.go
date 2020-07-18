@@ -23,7 +23,7 @@ type Page struct {
 }
 
 func main() {
-	context := &context.Context{Log: log.Init("web_server.log")}
+	context := &context.Context{Log: log.Init("web_server.log", false)}
 
 	context.Log.Info.Println("Web server start.")
 	mysqlPort := strconv.Itoa(cnfg.Config.MysqlPort)

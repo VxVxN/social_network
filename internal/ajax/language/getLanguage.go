@@ -7,17 +7,23 @@ import (
 	"social_network/internal/tools"
 )
 
+// TODO: move it
+var allLangs = []string{"EN", "RU"} // const
+
 func GetLanguage(w http.ResponseWriter, r *http.Request, ctx *context.Context) tools.Response {
-	var lang string
+	var isCookie bool
+	lang := cnfg.Config.DefaultLanguage
+
 	langCookie, err := r.Cookie("language")
-	if err != nil {
-		lang = cnfg.Config.DefaultLanguage
-	} else {
+	if err == nil {
+		isCookie = true
 		lang = langCookie.Value
 	}
-	if lang == "" {
-		ctx.Log.Error.Printf("Failed to get language")
-		return tools.Error500("Error to get language")
+
+	if !tools.ContainsString(lang, allLangs) {
+		ctx.Log.Error.Printf("Invalid language. Value: %s. IsCookie: %v", lang, isCookie)
+		return tools.Error500("Invalid language")
 	}
+
 	return tools.Success(lang)
 }

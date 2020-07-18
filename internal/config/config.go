@@ -28,7 +28,8 @@ type config struct {
 var Config config
 
 func init() {
-	jsonFile, err := os.Open("config/main.json")
+	baseDir := os.Getenv("BASE_DIR")
+	jsonFile, err := os.Open(baseDir + "/config/main.json")
 	if err != nil {
 		log.ComLog.Fatal.Printf("Error open main config: %v", err)
 		panic(err)

@@ -29,7 +29,7 @@ var Config config
 
 func init() {
 	baseDir := os.Getenv("BASE_DIR")
-	jsonFile, err := os.Open(baseDir + "/config/main.json")
+	jsonFile, err := os.Open(baseDir + "/configs/main.json")
 	if err != nil {
 		log.ComLog.Fatal.Printf("Error open main config: %v", err)
 		panic(err)

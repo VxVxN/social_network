@@ -3,7 +3,7 @@ package language
 import (
 	"net/http"
 	"social_network/cmd/ajax_server/context"
-	cnfg "social_network/internal/config"
+	cnfg "social_network/internal/configs"
 	"social_network/internal/log"
 	"testing"
 )

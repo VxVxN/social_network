@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"social_network/cmd/web_server/context"
+	"github.com/VxVxN/social_network/cmd/web_server/context"
 
 	uuid "github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

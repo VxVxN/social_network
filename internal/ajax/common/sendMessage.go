@@ -2,9 +2,10 @@ package common
 
 import (
 	"net/http"
-	"social_network/cmd/ajax_server/context"
-	"social_network/internal/tools"
 	"time"
+
+	"github.com/VxVxN/social_network/cmd/ajax_server/context"
+	"github.com/VxVxN/social_network/internal/tools"
 )
 
 type requestSendMessage struct {

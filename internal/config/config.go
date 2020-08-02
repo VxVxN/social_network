@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"social_network/internal/log"
+	"github.com/VxVxN/social_network/internal/log"
 )
 
 type config struct {

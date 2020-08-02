@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"social_network/cmd/web_server/context"
+	"github.com/VxVxN/social_network/cmd/web_server/context"
 
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"

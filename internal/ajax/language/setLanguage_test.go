@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"social_network/cmd/ajax_server/context"
-	"social_network/internal/log"
 	"testing"
+
+	"github.com/VxVxN/social_network/cmd/ajax_server/context"
+	"github.com/VxVxN/social_network/internal/log"
 )
 
 func TestSetLanguage(t *testing.T) {

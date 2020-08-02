@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"social_network/cmd/web_server/context"
+	"github.com/VxVxN/social_network/cmd/web_server/context"
 
 	"golang.org/x/crypto/bcrypt"
 )

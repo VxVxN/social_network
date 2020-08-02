@@ -4,11 +4,12 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"social_network/cmd/reverse_proxy_server/context"
-	cnfg "social_network/internal/config"
-	"social_network/internal/log"
 	"strconv"
 	"strings"
+
+	"github.com/VxVxN/social_network/cmd/reverse_proxy_server/context"
+	cnfg "github.com/VxVxN/social_network/internal/config"
+	"github.com/VxVxN/social_network/internal/log"
 )
 
 var protocol = "http://"

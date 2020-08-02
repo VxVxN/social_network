@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"social_network/cmd/ajax_server/context"
-	"social_network/internal/tools"
+	"github.com/VxVxN/social_network/cmd/ajax_server/context"
+	"github.com/VxVxN/social_network/internal/tools"
 )
 
 type responseMessages struct {

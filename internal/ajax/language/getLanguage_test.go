@@ -2,10 +2,11 @@ package language
 
 import (
 	"net/http"
-	"social_network/cmd/ajax_server/context"
-	cnfg "social_network/internal/configs"
-	"social_network/internal/log"
 	"testing"
+
+	"github.com/VxVxN/social_network/cmd/ajax_server/context"
+	cnfg "github.com/VxVxN/social_network/internal/config"
+	"github.com/VxVxN/social_network/internal/log"
 )
 
 func TestGetLanguage(t *testing.T) {

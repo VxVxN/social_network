@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/VxVxN/social_network/app/authorization"
+	cnfg "github.com/VxVxN/social_network/app/config"
+	"github.com/VxVxN/social_network/app/log"
+	"github.com/VxVxN/social_network/app/session"
 	"github.com/VxVxN/social_network/cmd/web_server/context"
-	"github.com/VxVxN/social_network/internal/authorization"
-	cnfg "github.com/VxVxN/social_network/internal/config"
-	"github.com/VxVxN/social_network/internal/log"
-	"github.com/VxVxN/social_network/internal/session"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"

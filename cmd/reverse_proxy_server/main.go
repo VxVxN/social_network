@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
+	cnfg "github.com/VxVxN/social_network/app/config"
+	"github.com/VxVxN/social_network/app/log"
 	"github.com/VxVxN/social_network/cmd/reverse_proxy_server/context"
-	cnfg "github.com/VxVxN/social_network/internal/config"
-	"github.com/VxVxN/social_network/internal/log"
 )
 
 var protocol = "http://"

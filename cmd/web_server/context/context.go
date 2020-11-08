@@ -3,7 +3,7 @@ package context
 import (
 	"database/sql"
 
-	"github.com/VxVxN/social_network/internal/log"
+	"github.com/VxVxN/social_network/app/log"
 )
 
 type Context struct {
